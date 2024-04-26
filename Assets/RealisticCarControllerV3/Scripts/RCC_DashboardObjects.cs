@@ -21,11 +21,11 @@ public class RCC_DashboardObjects : MonoBehaviour {
 	// Getting an Instance of Main Shared RCC Settings.
 	#region RCC Settings Instance
 
-	private RCC_Settings RCCSettingsInstance;
-	private RCC_Settings RCCSettings {
+	private RCC_SettingsData RCCSettingsInstance;
+	private RCC_SettingsData RCCSettings {
 		get {
 			if (RCCSettingsInstance == null) {
-				RCCSettingsInstance = RCC_Settings.Instance;
+				RCCSettingsInstance = RCC_SettingsData.InstanceR;
 				return RCCSettingsInstance;
 			}
 			return RCCSettingsInstance;
@@ -34,7 +34,7 @@ public class RCC_DashboardObjects : MonoBehaviour {
 
 	#endregion
 
-	private RCC_CarControllerV3 carController;
+	private RCC_CarMainControllerV3 carController;
 
 	[System.Serializable]
 	public class RPMDial{
@@ -249,7 +249,7 @@ public class RCC_DashboardObjects : MonoBehaviour {
 
 		public void Init(){
 
-			if(RCC_Settings.Instance.useLightsAsVertexLights)
+			if(RCC_SettingsData.InstanceR.useLightsAsVertexLightsValue)
 				renderMode = LightRenderMode.ForceVertex;
 			else
 				renderMode = LightRenderMode.ForcePixel;
@@ -284,7 +284,7 @@ public class RCC_DashboardObjects : MonoBehaviour {
 
 	void Awake () {
 
-		carController = GetComponentInParent<RCC_CarControllerV3> ();
+		carController = GetComponentInParent<RCC_CarMainControllerV3> ();
 
 		rPMDial.Init ();
 		speedDial.Init ();

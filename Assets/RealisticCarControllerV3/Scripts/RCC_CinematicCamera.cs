@@ -42,8 +42,8 @@ public class RCC_CinematicCamera : MonoBehaviour {
 
 		Transform target = null;
 
-		if(RCC_SceneManager.Instance.activePlayerCamera.playerCar)
-			target = RCC_SceneManager.Instance.activePlayerCamera.playerCar.transform;
+		if(RCC_SceneManager.Instance.activePlayerCamera.playerCarController)
+			target = RCC_SceneManager.Instance.activePlayerCamera.playerCarController.transform;
 
 		if (target == null)
 			return;

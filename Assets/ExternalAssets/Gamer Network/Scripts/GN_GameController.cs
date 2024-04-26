@@ -136,11 +136,11 @@ public class GN_GameController : MonoBehaviour {
 	public void setControls(){
 		if (GameManager.Instance.steeringControl)
 		{
-			RCC_Settings.Instance.mobileController = RCC_Settings.MobileController.SteeringWheel;
+			RCC_SettingsData.InstanceR.mobileControllerObject = RCC_SettingsData.MobileController.SteeringWheel;
 			toggle = false;
 		}else if (GameManager.Instance.arrowControl)
 		{
-			RCC_Settings.Instance.mobileController = RCC_Settings.MobileController.TouchScreen;
+			RCC_SettingsData.InstanceR.mobileControllerObject = RCC_SettingsData.MobileController.TouchScreen;
 			toggle = true;
 		}
 	}
@@ -149,13 +149,13 @@ public class GN_GameController : MonoBehaviour {
 	{
 		if (toggle)
 		{
-			RCC_Settings.Instance.mobileController = RCC_Settings.MobileController.SteeringWheel;
+			RCC_SettingsData.InstanceR.mobileControllerObject = RCC_SettingsData.MobileController.SteeringWheel;
 			GameManager.Instance.steeringControl = true;
 			GameManager.Instance.arrowControl = false;
 			toggle = false;
 		}else
 		{
-			RCC_Settings.Instance.mobileController = RCC_Settings.MobileController.TouchScreen;
+			RCC_SettingsData.InstanceR.mobileControllerObject = RCC_SettingsData.MobileController.TouchScreen;
 			GameManager.Instance.steeringControl = false;
 			GameManager.Instance.arrowControl = true;
 			toggle = true;
@@ -166,7 +166,7 @@ public class GN_GameController : MonoBehaviour {
 	{
 		carController.SetActive(true);
 		carCamera.SetActive(true);
-		playableCars[GameManager.Instance.CurrentPlayer].GetComponent<RCC_CarControllerV3>().StartEngine();
+		playableCars[GameManager.Instance.CurrentPlayer].GetComponent<RCC_CarMainControllerV3>().StartEngine();
 		if (playableCars[GameManager.Instance.CurrentPlayer].name.Contains("Sedan"))
 		{
 			playerSteering.GetComponent<Image>().sprite = playableSteerings[0];

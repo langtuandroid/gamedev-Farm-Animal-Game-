@@ -12,22 +12,22 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-[CustomEditor(typeof(RCC_AIBrakeZonesContainer))]
+[CustomEditor(typeof(RCC_AIBrakeZonesDrawingContainer))]
 public class RCC_AIBZEditor : Editor {
 	
-	RCC_AIBrakeZonesContainer bzScript;
+	RCC_AIBrakeZonesDrawingContainer bzScript;
 	
 	public override void  OnInspectorGUI () {
 		
 		serializedObject.Update();
 		
-		bzScript = (RCC_AIBrakeZonesContainer)target;
+		bzScript = (RCC_AIBrakeZonesDrawingContainer)target;
 
 		if(GUILayout.Button("Delete Brake Zones")){
-			foreach(Transform t in bzScript.brakeZones){
+			foreach(Transform t in bzScript.brakeZonesList){
 				DestroyImmediate(t.gameObject);
 			}
-			bzScript.brakeZones.Clear();
+			bzScript.brakeZonesList.Clear();
 		}
 
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("brakeZones"), new GUIContent("Brake Zones", "Brake Zones"), true);
@@ -41,7 +41,7 @@ public class RCC_AIBZEditor : Editor {
 	void OnSceneGUI (){
 
 		Event e = Event.current;
-		bzScript = (RCC_AIBrakeZonesContainer)target;
+		bzScript = (RCC_AIBrakeZonesDrawingContainer)target;
 
 		if(e != null){
 
@@ -53,11 +53,11 @@ public class RCC_AIBZEditor : Editor {
 
 					Vector3 newTilePosition = hit.point;
 
-					GameObject wp = new GameObject("Brake Zone " + bzScript.brakeZones.Count.ToString());
+					GameObject wp = new GameObject("Brake Zone " + bzScript.brakeZonesList.Count.ToString());
 
 					wp.transform.position = newTilePosition;
 					wp.transform.gameObject.layer = LayerMask.NameToLayer ("Ignore Raycast");
-					wp.AddComponent<RCC_AIBrakeZone>();
+					wp.AddComponent<RCC_AIVehiclesBrakeZone>();
 					wp.AddComponent<BoxCollider>();
 					wp.GetComponent<BoxCollider>().isTrigger = true;
 					wp.GetComponent<BoxCollider>().size = new Vector3(25, 10, 50);
@@ -80,14 +80,14 @@ public class RCC_AIBZEditor : Editor {
 	
 	public void GetBrakeZones(){
 		
-		bzScript.brakeZones = new List<Transform>();
+		bzScript.brakeZonesList = new List<Transform>();
 		
 		Transform[] allTransforms = bzScript.transform.GetComponentsInChildren<Transform>();
 		
 		foreach(Transform t in allTransforms){
 			
 			if(t != bzScript.transform)
-				bzScript.brakeZones.Add(t);
+				bzScript.brakeZonesList.Add(t);
 			
 		}
 		

@@ -16,7 +16,7 @@ using System.Collections;
 [AddComponentMenu("BoneCracker Games/Realistic Car Controller/Misc/RCC Animator Controller")]
 public class RCC_CharacterController : MonoBehaviour {
 
-	private RCC_CarControllerV3 carController;
+	private RCC_CarMainControllerV3 carController;
 	private Rigidbody carRigid;
 	public Animator animator;
 
@@ -38,7 +38,7 @@ public class RCC_CharacterController : MonoBehaviour {
 		if(!animator)
 			animator = GetComponentInChildren<Animator>();
 		
-		carController = GetComponent<RCC_CarControllerV3>();
+		carController = GetComponent<RCC_CarMainControllerV3>();
 		carRigid = GetComponent<Rigidbody>();
 		
 	}

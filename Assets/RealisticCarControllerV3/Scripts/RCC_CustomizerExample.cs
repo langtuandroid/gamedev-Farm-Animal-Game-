@@ -73,14 +73,14 @@ public class RCC_CustomizerExample : MonoBehaviour {
 		if (!RCC_SceneManager.Instance.activePlayerVehicle)
 			return;
 
-		frontCamber.value = RCC_SceneManager.Instance.activePlayerVehicle.FrontLeftWheelCollider.camber;
-		rearCamber.value = RCC_SceneManager.Instance.activePlayerVehicle.RearLeftWheelCollider.camber;
-		frontSuspensionDistances.value = RCC_SceneManager.Instance.activePlayerVehicle.FrontLeftWheelCollider.wheelCollider.suspensionDistance;
-		rearSuspensionDistances.value = RCC_SceneManager.Instance.activePlayerVehicle.RearLeftWheelCollider.wheelCollider.suspensionDistance;
-		frontSuspensionDampers.value = RCC_SceneManager.Instance.activePlayerVehicle.FrontLeftWheelCollider.wheelCollider.suspensionSpring.damper;
-		rearSuspensionDampers.value = RCC_SceneManager.Instance.activePlayerVehicle.RearLeftWheelCollider.wheelCollider.suspensionSpring.damper;
-		frontSuspensionSprings.value = RCC_SceneManager.Instance.activePlayerVehicle.FrontLeftWheelCollider.wheelCollider.suspensionSpring.spring;
-		rearSuspensionSprings.value = RCC_SceneManager.Instance.activePlayerVehicle.RearLeftWheelCollider.wheelCollider.suspensionSpring.spring;
+		frontCamber.value = RCC_SceneManager.Instance.activePlayerVehicle.FrontLeftWheelCollider.camberValue;
+		rearCamber.value = RCC_SceneManager.Instance.activePlayerVehicle.RearLeftWheelCollider.camberValue;
+		frontSuspensionDistances.value = RCC_SceneManager.Instance.activePlayerVehicle.FrontLeftWheelCollider.wheelColliderObject.suspensionDistance;
+		rearSuspensionDistances.value = RCC_SceneManager.Instance.activePlayerVehicle.RearLeftWheelCollider.wheelColliderObject.suspensionDistance;
+		frontSuspensionDampers.value = RCC_SceneManager.Instance.activePlayerVehicle.FrontLeftWheelCollider.wheelColliderObject.suspensionSpring.damper;
+		rearSuspensionDampers.value = RCC_SceneManager.Instance.activePlayerVehicle.RearLeftWheelCollider.wheelColliderObject.suspensionSpring.damper;
+		frontSuspensionSprings.value = RCC_SceneManager.Instance.activePlayerVehicle.FrontLeftWheelCollider.wheelColliderObject.suspensionSpring.spring;
+		rearSuspensionSprings.value = RCC_SceneManager.Instance.activePlayerVehicle.RearLeftWheelCollider.wheelColliderObject.suspensionSpring.spring;
 		gearShiftingThreshold.value = RCC_SceneManager.Instance.activePlayerVehicle.gearShiftingThreshold;
 		clutchThreshold.value = RCC_SceneManager.Instance.activePlayerVehicle.clutchInertia;
 
@@ -93,7 +93,7 @@ public class RCC_CustomizerExample : MonoBehaviour {
 		turbo.isOn = RCC_SceneManager.Instance.activePlayerVehicle.useTurbo;
 		exhaustFlame.isOn = RCC_SceneManager.Instance.activePlayerVehicle.useExhaustFlame;
 		revLimiter.isOn = RCC_SceneManager.Instance.activePlayerVehicle.useRevLimiter;
-		transmission.isOn = RCC_Settings.Instance.useAutomaticGear;
+		transmission.isOn = RCC_SettingsData.InstanceR.useAutomaticGearFlag;
 
 		maxSpeed.text = RCC_SceneManager.Instance.activePlayerVehicle.maxspeed.ToString();
 		maxBrake.text = RCC_SceneManager.Instance.activePlayerVehicle.brakeTorque.ToString();
@@ -101,19 +101,19 @@ public class RCC_CustomizerExample : MonoBehaviour {
 
 		switch (RCC_SceneManager.Instance.activePlayerVehicle.wheelTypeChoise) {
 
-		case RCC_CarControllerV3.WheelType.FWD:
+		case RCC_CarMainControllerV3.WheelType.FWD:
 			drivetrainMode.value = 0;
 			break;
 
-		case RCC_CarControllerV3.WheelType.RWD:
+		case RCC_CarMainControllerV3.WheelType.RWD:
 			drivetrainMode.value = 1;
 			break;
 
-		case RCC_CarControllerV3.WheelType.AWD:
+		case RCC_CarMainControllerV3.WheelType.AWD:
 			drivetrainMode.value = 2;
 			break;
 
-		case RCC_CarControllerV3.WheelType.BIASED:
+		case RCC_CarMainControllerV3.WheelType.BIASED:
 			drivetrainMode.value = 3;
 			break;
 
@@ -247,15 +247,15 @@ public class RCC_CustomizerExample : MonoBehaviour {
 		switch (dropdown.value) {
 
 		case 0:
-			RCC_Customization.SetDrivetrainMode (RCC_SceneManager.Instance.activePlayerVehicle, RCC_CarControllerV3.WheelType.FWD);
+			RCC_Customization.SetDrivetrainMode (RCC_SceneManager.Instance.activePlayerVehicle, RCC_CarMainControllerV3.WheelType.FWD);
 			break;
 
 		case 1:
-			RCC_Customization.SetDrivetrainMode (RCC_SceneManager.Instance.activePlayerVehicle, RCC_CarControllerV3.WheelType.RWD);
+			RCC_Customization.SetDrivetrainMode (RCC_SceneManager.Instance.activePlayerVehicle, RCC_CarMainControllerV3.WheelType.RWD);
 			break;
 
 		case 2:
-			RCC_Customization.SetDrivetrainMode (RCC_SceneManager.Instance.activePlayerVehicle, RCC_CarControllerV3.WheelType.AWD);
+			RCC_Customization.SetDrivetrainMode (RCC_SceneManager.Instance.activePlayerVehicle, RCC_CarMainControllerV3.WheelType.AWD);
 			break;
 
 		}
@@ -399,7 +399,7 @@ public class RCC_CustomizerExample : MonoBehaviour {
 		if(GameObject.FindObjectOfType<RCC_Demo> ())
 			selectedVehicleIndex = GameObject.FindObjectOfType<RCC_Demo> ().selectedVehicleIndex;
 
-		RCC_Customization.ResetStats (RCC_SceneManager.Instance.activePlayerVehicle, RCC_DemoVehicles.Instance.vehicles[selectedVehicleIndex]);
+		RCC_Customization.ResetStats (RCC_SceneManager.Instance.activePlayerVehicle, RCC_DemoVehiclesData.InstanceR.vehiclesMass[selectedVehicleIndex]);
 
 		CheckUIs ();
 

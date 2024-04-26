@@ -274,7 +274,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1539550645}
-        m_MethodName: SetControl
+        m_MethodName: SetCarControl
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -653,7 +653,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1539550645}
-        m_MethodName: SetControl
+        m_MethodName: SetCarControl
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1113,7 +1113,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1539550645}
-        m_MethodName: DeRegisterPlayer
+        m_MethodName: DeRegisterPlayerVehicle
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1246,7 +1246,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1539550645}
-        m_MethodName: SetEngine
+        m_MethodName: SetEngineState
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1569,7 +1569,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1539550645}
-        m_MethodName: Spawn
+        m_MethodName: SpawnVehicle
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2110,7 +2110,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1539550645}
-        m_MethodName: SetEngine
+        m_MethodName: SetEngineState
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2773,7 +2773,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1539550645}
-        m_MethodName: SetPlayer
+        m_MethodName: SetPlayerVehicle
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -11,17 +11,17 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 
-[CustomEditor(typeof(RCC_Camera))]
+[CustomEditor(typeof(RCC_CameraController))]
 public class RCC_CameraEditor : Editor {
 
-	RCC_Camera RCCCam;
+	RCC_CameraController RCCCam;
 	Color orgColor;
 
 	public override void OnInspectorGUI () {
 
 		serializedObject.Update();
 
-		RCCCam = (RCC_Camera)target;
+		RCCCam = (RCC_CameraController)target;
 		orgColor = GUI.color;
 
 		EditorGUILayout.Space ();
@@ -83,7 +83,7 @@ public class RCC_CameraEditor : Editor {
 		EditorGUILayout.LabelField ("FPS", EditorStyles.boldLabel);
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("useHoodCameraMode"), new GUIContent("Use Hood Camera Mode", "Shall we use Hood Camera Mode?"), false);
 
-		if (RCCCam.useHoodCameraMode) {
+		if (RCCCam.useHoodCameraModeFlag) {
 
 			EditorGUILayout.HelpBox ("Be sure your vehicle has ''Hood Camera''. Camera will be parented to this gameobject. You can create it from Tools --> BCG --> RCC --> Camera Systems --> Add Hood Camera.", MessageType.Info);
 			EditorGUILayout.PropertyField (serializedObject.FindProperty ("hoodCameraFOV"), new GUIContent ("Hood Camera FOV", "Hood Camera FOV."), false);
@@ -100,7 +100,7 @@ public class RCC_CameraEditor : Editor {
 		EditorGUILayout.LabelField ("Wheel", EditorStyles.boldLabel);
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("useWheelCameraMode"), new GUIContent("Use Wheel Camera Mode", "Shall we use Wheel Camera Mode?"), false);
 
-		if (RCCCam.useWheelCameraMode) {
+		if (RCCCam.useWheelCameraModeFlag) {
 
 			EditorGUILayout.HelpBox ("Be sure your vehicle has ''Wheel Camera''. Camera will be parented to this gameobject. You can create it from Tools --> BCG --> RCC --> Camera Systems --> Add Wheel Camera.", MessageType.Info);
 			EditorGUILayout.PropertyField (serializedObject.FindProperty ("wheelCameraFOV"), new GUIContent ("Wheel Camera FOV", "Wheel Camera FOV."), false);
@@ -116,7 +116,7 @@ public class RCC_CameraEditor : Editor {
 		EditorGUILayout.LabelField ("Fixed", EditorStyles.boldLabel);
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("useFixedCameraMode"), new GUIContent("Use Fixed Camera Mode", "Shall we use Fixed Camera Mode?"), false);
 
-		if (RCCCam.useFixedCameraMode) {
+		if (RCCCam.useFixedCameraModeFlag) {
 
 			EditorGUILayout.HelpBox ("Fixed Camera is overrided by ''Fixed Camera System'' on your scene.", MessageType.Info);
 
@@ -158,7 +158,7 @@ public class RCC_CameraEditor : Editor {
 		EditorGUILayout.LabelField ("Cinematic", EditorStyles.boldLabel);
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("useCinematicCameraMode"), new GUIContent("Use Cinematic Camera Mode", "Shall we use Cinematic Camera Mode?"), false);
 
-		if (RCCCam.useCinematicCameraMode) {
+		if (RCCCam.useCinematicCameraModeFlag) {
 
 			EditorGUILayout.HelpBox ("Cinematic Camera is overrided by ''Cinematic Camera System'' on your scene.", MessageType.Info);
 
@@ -170,7 +170,7 @@ public class RCC_CameraEditor : Editor {
 
 				if (GUILayout.Button ("Create Cinematic Camera System")) {
 
-					GameObject cinematicCamera = GameObject.Instantiate (RCC_Settings.Instance.cinematicCamera, Vector3.zero, Quaternion.identity) as GameObject;
+					GameObject cinematicCamera = GameObject.Instantiate (RCC_SettingsData.InstanceR.cinematicCameraObject, Vector3.zero, Quaternion.identity) as GameObject;
 					RCC_LabelEditor.SetIcon (cinematicCamera, RCC_LabelEditor.LabelIcon.Orange);
 
 				}
@@ -215,7 +215,7 @@ public class RCC_CameraEditor : Editor {
 		EditorGUILayout.LabelField ("Top-Down", EditorStyles.boldLabel);
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("useTopCameraMode"), new GUIContent("Use Top Camera Mode", "Shall we use Top Camera Mode?"), false);
 
-		if (RCCCam.useTopCameraMode) {
+		if (RCCCam.useTopCameraModeFlag) {
 
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("useOrthoForTopCamera"), new GUIContent("Use Ortho Mode", "Use Ortho Mode."), false);
 			EditorGUILayout.Space ();
@@ -223,7 +223,7 @@ public class RCC_CameraEditor : Editor {
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("topCameraAngle"), new GUIContent("Top Camera Angle", "Top Camera Angle"), false);
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("maximumZDistanceOffset"), new GUIContent("Top Camera Maximum Z Distance", "Top Camera Maximum Z Distance"), false);
 
-			if (RCCCam.useOrthoForTopCamera) {
+			if (RCCCam.useOrthoForTopCameraFlag) {
 				EditorGUILayout.PropertyField (serializedObject.FindProperty ("minimumOrtSize"), new GUIContent ("Minimum Ortho Size", "Minimum Ortho Size related with vehicle speed."), false);
 				EditorGUILayout.PropertyField (serializedObject.FindProperty ("maximumOrtSize"), new GUIContent ("Maximum Ortho Size", "Maximum Ortho Size related with vehicle speed."), false);
 			} else {
@@ -242,10 +242,10 @@ public class RCC_CameraEditor : Editor {
 
 		if (GUILayout.Button ("Reset To Default Settings")) {
 
-			UnityEditorInternal.ComponentUtility.CopyComponent(RCC_Settings.Instance.RCCMainCamera);
+			UnityEditorInternal.ComponentUtility.CopyComponent(RCC_SettingsData.InstanceR.RCCMainCameraController);
 			UnityEditorInternal.ComponentUtility.PasteComponentValues(RCCCam);
 
-			RCCCam.pivot = RCCCam.transform.Find ("Pivot").gameObject;
+			RCCCam.pivotObject = RCCCam.transform.Find ("Pivot").gameObject;
 
 		}
 

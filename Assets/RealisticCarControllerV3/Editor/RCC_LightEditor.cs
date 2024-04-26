@@ -13,10 +13,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-[CustomEditor(typeof(RCC_Light)), CanEditMultipleObjects]
+[CustomEditor(typeof(RCC_LightController)), CanEditMultipleObjects]
 public class RCC_LightEditor : Editor {
 
-	RCC_Light prop;
+	RCC_LightController prop;
 
 	Color originalGUIColor;
 
@@ -24,7 +24,7 @@ public class RCC_LightEditor : Editor {
 
 		originalGUIColor = GUI.color;
 		serializedObject.Update();
-		prop = (RCC_Light)target;
+		prop = (RCC_LightController)target;
 
 		CheckLights ();
 
@@ -82,8 +82,8 @@ public class RCC_LightEditor : Editor {
 					if (lights [i].GetComponentInChildren<TrailRenderer> ())
 						break;
 
-					GameObject newTrail = GameObject.Instantiate (RCC_Settings.Instance.lightTrailers, lights [i].transform.position, lights [i].transform.rotation, lights [i].transform);
-					newTrail.name = RCC_Settings.Instance.lightTrailers.name;
+					GameObject newTrail = GameObject.Instantiate (RCC_SettingsData.InstanceR.lightTrailersObject, lights [i].transform.position, lights [i].transform.rotation, lights [i].transform);
+					newTrail.name = RCC_SettingsData.InstanceR.lightTrailersObject.name;
 
 				}
 
@@ -108,7 +108,7 @@ public class RCC_LightEditor : Editor {
 		if (!prop.gameObject.activeInHierarchy)
 			return;
 
-		Vector3 relativePos = prop.GetComponentInParent<RCC_CarControllerV3>().transform.InverseTransformPoint (prop.transform.position);
+		Vector3 relativePos = prop.GetComponentInParent<RCC_CarMainControllerV3>().transform.InverseTransformPoint (prop.transform.position);
 
 		if (relativePos.z > 0f) {
 			

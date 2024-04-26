@@ -14,20 +14,20 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-[CustomEditor(typeof(RCC_GroundMaterials))]
+[CustomEditor(typeof(RCC_GroundMaterialsData))]
 public class RCC_GroundMaterialsEditor : Editor {
 
-	RCC_GroundMaterials prop;
+	RCC_GroundMaterialsData prop;
 
 	Vector2 scrollPos;
-	List<RCC_GroundMaterials.GroundMaterialFrictions> groundMaterials = new List<RCC_GroundMaterials.GroundMaterialFrictions>();
+	List<RCC_GroundMaterialsData.GroundMaterialFrictionsData> groundMaterials = new List<RCC_GroundMaterialsData.GroundMaterialFrictionsData>();
 
 	Color orgColor;
 
 	public override void OnInspectorGUI (){
 
 		serializedObject.Update();
-		prop = (RCC_GroundMaterials)target;
+		prop = (RCC_GroundMaterialsData)target;
 		orgColor = GUI.color;
 
 		EditorGUILayout.Space();
@@ -42,14 +42,14 @@ public class RCC_GroundMaterialsEditor : Editor {
 
 		GUILayout.Label("Ground Materials", EditorStyles.boldLabel);
 
-		for (int i = 0; i < prop.frictions.Length; i++) {
+		for (int i = 0; i < prop.frictionsMass.Length; i++) {
 
 			EditorGUILayout.BeginVertical(GUI.skin.box);
 			EditorGUILayout.Space();
 			EditorGUILayout.BeginHorizontal ();
 
-			if(prop.frictions[i].groundMaterial)
-				EditorGUILayout.LabelField(prop.frictions[i].groundMaterial.name + (i == 0 ? " (Default)" : ""), EditorStyles.boldLabel);
+			if(prop.frictionsMass[i].groundMaterialValue)
+				EditorGUILayout.LabelField(prop.frictionsMass[i].groundMaterialValue.name + (i == 0 ? " (Default)" : ""), EditorStyles.boldLabel);
 
 			GUI.color = Color.red;		if(GUILayout.Button("X", GUILayout.Width(25f))){RemoveGroundMaterial(i);}	GUI.color = orgColor;
 
@@ -57,30 +57,30 @@ public class RCC_GroundMaterialsEditor : Editor {
 			EditorGUILayout.Space();
 			EditorGUILayout.BeginHorizontal();
 
-			prop.frictions[i].groundMaterial = (PhysicMaterial)EditorGUILayout.ObjectField("Physic Material", prop.frictions[i].groundMaterial, typeof(PhysicMaterial), false, GUILayout.Width(250f));
-			prop.frictions[i].forwardStiffness = EditorGUILayout.FloatField("Forward Stiffness", prop.frictions[i].forwardStiffness, GUILayout.Width(150f));
+			prop.frictionsMass[i].groundMaterialValue = (PhysicMaterial)EditorGUILayout.ObjectField("Physic Material", prop.frictionsMass[i].groundMaterialValue, typeof(PhysicMaterial), false, GUILayout.Width(250f));
+			prop.frictionsMass[i].forwardStiffnessValue = EditorGUILayout.FloatField("Forward Stiffness", prop.frictionsMass[i].forwardStiffnessValue, GUILayout.Width(150f));
 
 			EditorGUILayout.EndHorizontal();
 
 			EditorGUILayout.BeginHorizontal();
-			prop.frictions[i].groundSound = (AudioClip)EditorGUILayout.ObjectField("Wheel Sound", prop.frictions[i].groundSound, typeof(AudioClip), false, GUILayout.Width(250f));
-			prop.frictions[i].sidewaysStiffness = EditorGUILayout.FloatField("Sideways Stiffness", prop.frictions[i].sidewaysStiffness, GUILayout.Width(150f));
+			prop.frictionsMass[i].groundAudioSound = (AudioClip)EditorGUILayout.ObjectField("Wheel Sound", prop.frictionsMass[i].groundAudioSound, typeof(AudioClip), false, GUILayout.Width(250f));
+			prop.frictionsMass[i].sidewaysStiffnessValue = EditorGUILayout.FloatField("Sideways Stiffness", prop.frictionsMass[i].sidewaysStiffnessValue, GUILayout.Width(150f));
 
 			EditorGUILayout.EndHorizontal();
 
-			prop.frictions[i].volume = EditorGUILayout.Slider("Volume", prop.frictions[i].volume, 0f, 1f, GUILayout.Width(250f));
+			prop.frictionsMass[i].volumeValue = EditorGUILayout.Slider("Volume", prop.frictionsMass[i].volumeValue, 0f, 1f, GUILayout.Width(250f));
 
 			EditorGUILayout.BeginHorizontal();
-			prop.frictions[i].groundParticles = (GameObject)EditorGUILayout.ObjectField("Wheel Particles", prop.frictions[i].groundParticles, typeof(GameObject), false, GUILayout.Width(200f));
-			prop.frictions[i].skidmark = (RCC_Skidmarks)EditorGUILayout.ObjectField("Wheel Skidmarks", prop.frictions[i].skidmark, typeof(RCC_Skidmarks), false, GUILayout.Width(200f));
+			prop.frictionsMass[i].groundParticlesObject = (GameObject)EditorGUILayout.ObjectField("Wheel Particles", prop.frictionsMass[i].groundParticlesObject, typeof(GameObject), false, GUILayout.Width(200f));
+			prop.frictionsMass[i].skidmarkController = (RCC_SkidmarksController)EditorGUILayout.ObjectField("Wheel Skidmarks", prop.frictionsMass[i].skidmarkController, typeof(RCC_SkidmarksController), false, GUILayout.Width(200f));
 
 			EditorGUILayout.Space();
 
 			EditorGUILayout.EndHorizontal();
 
 			EditorGUILayout.BeginHorizontal();
-			prop.frictions[i].slip = EditorGUILayout.FloatField("Slip", prop.frictions[i].slip, GUILayout.Width(150f));
-			prop.frictions[i].damp = EditorGUILayout.FloatField("Damp", prop.frictions[i].damp, GUILayout.Width(150f));
+			prop.frictionsMass[i].slipValue = EditorGUILayout.FloatField("Slip", prop.frictionsMass[i].slipValue, GUILayout.Width(150f));
+			prop.frictionsMass[i].dampValue = EditorGUILayout.FloatField("Damp", prop.frictionsMass[i].dampValue, GUILayout.Width(150f));
 			EditorGUILayout.EndHorizontal();
 
 			EditorGUILayout.Space();
@@ -128,25 +128,25 @@ public class RCC_GroundMaterialsEditor : Editor {
 	void AddNewWheel(){
 
 		groundMaterials.Clear();
-		groundMaterials.AddRange(prop.frictions);
-		RCC_GroundMaterials.GroundMaterialFrictions newGroundMaterial = new RCC_GroundMaterials.GroundMaterialFrictions();
+		groundMaterials.AddRange(prop.frictionsMass);
+		RCC_GroundMaterialsData.GroundMaterialFrictionsData newGroundMaterial = new RCC_GroundMaterialsData.GroundMaterialFrictionsData();
 		groundMaterials.Add(newGroundMaterial);
-		prop.frictions = groundMaterials.ToArray();
+		prop.frictionsMass = groundMaterials.ToArray();
 
 	}
 
 	void RemoveGroundMaterial(int index){
 
 		groundMaterials.Clear();
-		groundMaterials.AddRange(prop.frictions);
+		groundMaterials.AddRange(prop.frictionsMass);
 		groundMaterials.RemoveAt(index);
-		prop.frictions = groundMaterials.ToArray();
+		prop.frictionsMass = groundMaterials.ToArray();
 
 	}
 
 	void OpenGeneralSettings(){
 
-		Selection.activeObject =RCC_Settings.Instance;
+		Selection.activeObject =RCC_SettingsData.InstanceR;
 
 	}
 

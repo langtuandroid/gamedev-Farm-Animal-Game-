@@ -12,10 +12,10 @@ using System.Collections;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 
-[CustomEditor(typeof(RCC_CarControllerV3)), CanEditMultipleObjects]
+[CustomEditor(typeof(RCC_CarMainControllerV3)), CanEditMultipleObjects]
 public class RCC_Editor : Editor {
 
-	RCC_CarControllerV3 carScript;
+	RCC_CarMainControllerV3 carScript;
 
 	static bool firstInit = false;
 	
@@ -44,13 +44,13 @@ public class RCC_Editor : Editor {
 	[MenuItem("Tools/BoneCracker Games/Realistic Car Controller/Add Main Controller To Vehicle", false, -85)]
 	static void CreateBehavior(){
 
-		if(!Selection.activeGameObject.GetComponentInParent<RCC_CarControllerV3>()){
+		if(!Selection.activeGameObject.GetComponentInParent<RCC_CarMainControllerV3>()){
 
 			GameObject pivot = new GameObject (Selection.activeGameObject.name);
-			pivot.transform.position = RCC_GetBounds.GetBoundsCenter (Selection.activeGameObject.transform);
+			pivot.transform.position = RCC_GetBoundsSize.GetBoundsCenterVector (Selection.activeGameObject.transform);
 			pivot.transform.rotation = Selection.activeGameObject.transform.rotation;
 
-			pivot.AddComponent<RCC_CarControllerV3>();
+			pivot.AddComponent<RCC_CarMainControllerV3>();
 
 			pivot.GetComponent<Rigidbody>().mass = 1400f;
 			pivot.GetComponent<Rigidbody>().drag = .01f;
@@ -99,10 +99,10 @@ public class RCC_Editor : Editor {
 
 		serializedObject.Update();
 
-		carScript = (RCC_CarControllerV3)target;
+		carScript = (RCC_CarMainControllerV3)target;
 		defBackgroundColor = GUI.backgroundColor;
 
-		if(!carScript.GetComponent<RCC_AICarController>())
+		if(!carScript.GetComponent<RCC_AICarMovementController>())
 			carScript.externalController = false;
 
 		if(firstInit)
@@ -143,7 +143,7 @@ public class RCC_Editor : Editor {
 		if (DamageSettings)
 			DamageTab();
 
-		if(carScript.GetComponent<RCC_AICarController>()){
+		if(carScript.GetComponent<RCC_AICarMovementController>()){
 
 			EditorGUILayout.Space();
 			EditorGUILayout.HelpBox("This Vehicle Is Controlling By AI. Therefore, All Player Controllers Are Disabled For This Vehicle.", MessageType.Info);
@@ -151,7 +151,7 @@ public class RCC_Editor : Editor {
 
 			if(GUILayout.Button("Remove AI Controller From Vehicle")){
 				carScript.externalController = false;
-				DestroyImmediate(carScript.GetComponent<RCC_AICarController>());
+				DestroyImmediate(carScript.GetComponent<RCC_AICarMovementController>());
 			}
 
 		}
@@ -192,7 +192,7 @@ public class RCC_Editor : Editor {
 			
 		}
 
-		if(carScript.externalController && !GameObject.FindObjectOfType<RCC_AIWaypointsContainer>())
+		if(carScript.externalController && !GameObject.FindObjectOfType<RCC_AIWaypointsDrawingContainer>())
 			EditorGUILayout.HelpBox("Scene doesn't have RCC_AIWaypointsContainer. You can create it from Tool --> BCG --> RCC --> AI.", MessageType.Error);
 
 		if (FindObjectOfType<RCC_SceneManager> () == null) {
@@ -213,7 +213,7 @@ public class RCC_Editor : Editor {
 		 
 		if(GUI.changed && !EditorApplication.isPlaying){
 			
-			if(RCC_Settings.Instance.setTagsAndLayers)
+			if(RCC_SettingsData.InstanceR.setTagsAndLayersFlag)
 				SetLayerMask();
 
 			if(carScript.autoGenerateEngineRPMCurve)
@@ -373,16 +373,16 @@ public class RCC_Editor : Editor {
 		}
 
 		if (carScript.FrontLeftWheelCollider && carScript.FrontLeftWheelTransform)
-			carScript.FrontLeftWheelCollider.wheelModel = carScript.FrontLeftWheelTransform;
+			carScript.FrontLeftWheelCollider.wheelModelTransform = carScript.FrontLeftWheelTransform;
 
 		if (carScript.FrontRightWheelCollider && carScript.FrontRightWheelTransform)
-			carScript.FrontRightWheelCollider.wheelModel = carScript.FrontRightWheelTransform;
+			carScript.FrontRightWheelCollider.wheelModelTransform = carScript.FrontRightWheelTransform;
 
 		if (carScript.RearLeftWheelCollider && carScript.RearLeftWheelTransform)
-			carScript.RearLeftWheelCollider.wheelModel = carScript.RearLeftWheelTransform;
+			carScript.RearLeftWheelCollider.wheelModelTransform = carScript.RearLeftWheelTransform;
 
 		if (carScript.RearRightWheelCollider && carScript.RearRightWheelTransform)
-			carScript.RearRightWheelCollider.wheelModel = carScript.RearRightWheelTransform;
+			carScript.RearRightWheelCollider.wheelModelTransform = carScript.RearRightWheelTransform;
 
 		EditorGUILayout.Space();
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("applyEngineTorqueToExtraRearWheelColliders"), new GUIContent("Apply Engine Torque To Extra Rear Wheels", "Applies Engine Torque To Extra Rear Wheels."), false);
@@ -438,8 +438,8 @@ public class RCC_Editor : Editor {
 			return;
 		}
 
-		JointSpring frontSspring = carScript.FrontLeftWheelCollider.wheelCollider.suspensionSpring;
-		JointSpring rearSpring = carScript.RearLeftWheelCollider.wheelCollider.suspensionSpring;
+		JointSpring frontSspring = carScript.FrontLeftWheelCollider.wheelColliderObject.suspensionSpring;
+		JointSpring rearSpring = carScript.RearLeftWheelCollider.wheelColliderObject.suspensionSpring;
 
 		GUILayout.BeginHorizontal();
 
@@ -471,11 +471,11 @@ public class RCC_Editor : Editor {
 
 			EditorGUILayout.Space();
 
-			carScript.FrontLeftWheelCollider.wheelCollider.suspensionDistance = carScript.FrontRightWheelCollider.wheelCollider.suspensionDistance = EditorGUILayout.FloatField("Front Suspensions Distance", carScript.FrontLeftWheelCollider.wheelCollider.suspensionDistance);
-			carScript.FrontLeftWheelCollider.wheelCollider.forceAppPointDistance = carScript.FrontRightWheelCollider.wheelCollider.forceAppPointDistance = EditorGUILayout.FloatField("Front Force App Distance", carScript.FrontLeftWheelCollider.wheelCollider.forceAppPointDistance);
+			carScript.FrontLeftWheelCollider.wheelColliderObject.suspensionDistance = carScript.FrontRightWheelCollider.wheelColliderObject.suspensionDistance = EditorGUILayout.FloatField("Front Suspensions Distance", carScript.FrontLeftWheelCollider.wheelColliderObject.suspensionDistance);
+			carScript.FrontLeftWheelCollider.wheelColliderObject.forceAppPointDistance = carScript.FrontRightWheelCollider.wheelColliderObject.forceAppPointDistance = EditorGUILayout.FloatField("Front Force App Distance", carScript.FrontLeftWheelCollider.wheelColliderObject.forceAppPointDistance);
 
 			if (carScript.FrontLeftWheelCollider && carScript.FrontRightWheelCollider)
-				carScript.FrontLeftWheelCollider.camber = carScript.FrontRightWheelCollider.camber = EditorGUILayout.FloatField("Front Camber Angle", carScript.FrontLeftWheelCollider.camber);
+				carScript.FrontLeftWheelCollider.camberValue = carScript.FrontRightWheelCollider.camberValue = EditorGUILayout.FloatField("Front Camber Angle", carScript.FrontLeftWheelCollider.camberValue);
 
 			EditorGUILayout.Space();
 
@@ -491,17 +491,17 @@ public class RCC_Editor : Editor {
 
 			EditorGUILayout.Space();
 
-			carScript.RearLeftWheelCollider.wheelCollider.suspensionDistance = carScript.RearRightWheelCollider.wheelCollider.suspensionDistance = EditorGUILayout.FloatField("Rear Suspensions Distance", carScript.RearLeftWheelCollider.wheelCollider.suspensionDistance);
-			carScript.RearLeftWheelCollider.wheelCollider.forceAppPointDistance = carScript.RearRightWheelCollider.wheelCollider.forceAppPointDistance = EditorGUILayout.FloatField("Rear Force App Distance", carScript.RearLeftWheelCollider.wheelCollider.forceAppPointDistance);
+			carScript.RearLeftWheelCollider.wheelColliderObject.suspensionDistance = carScript.RearRightWheelCollider.wheelColliderObject.suspensionDistance = EditorGUILayout.FloatField("Rear Suspensions Distance", carScript.RearLeftWheelCollider.wheelColliderObject.suspensionDistance);
+			carScript.RearLeftWheelCollider.wheelColliderObject.forceAppPointDistance = carScript.RearRightWheelCollider.wheelColliderObject.forceAppPointDistance = EditorGUILayout.FloatField("Rear Force App Distance", carScript.RearLeftWheelCollider.wheelColliderObject.forceAppPointDistance);
 
 			if (carScript.RearLeftWheelCollider && carScript.RearRightWheelCollider) {
 
-				carScript.RearLeftWheelCollider.camber = carScript.RearRightWheelCollider.camber = EditorGUILayout.FloatField("Rear Camber Angle", carScript.RearLeftWheelCollider.camber);
+				carScript.RearLeftWheelCollider.camberValue = carScript.RearRightWheelCollider.camberValue = EditorGUILayout.FloatField("Rear Camber Angle", carScript.RearLeftWheelCollider.camberValue);
 
 				if (carScript.ExtraRearWheelsCollider != null && carScript.ExtraRearWheelsCollider.Length > 0) {
 
-					foreach (RCC_WheelCollider wc in carScript.ExtraRearWheelsCollider)
-						wc.camber = carScript.RearLeftWheelCollider.camber;
+					foreach (RCC_WheelColliderController wc in carScript.ExtraRearWheelsCollider)
+						wc.camberValue = carScript.RearLeftWheelCollider.camberValue;
 
 				}
 
@@ -516,10 +516,10 @@ public class RCC_Editor : Editor {
 			EditorGUILayout.Space();
 		}
 
-		carScript.FrontLeftWheelCollider.wheelCollider.suspensionSpring = frontSspring;
-		carScript.FrontRightWheelCollider.wheelCollider.suspensionSpring = frontSspring;
-		carScript.RearLeftWheelCollider.wheelCollider.suspensionSpring = rearSpring;
-		carScript.RearRightWheelCollider.wheelCollider.suspensionSpring = rearSpring;
+		carScript.FrontLeftWheelCollider.wheelColliderObject.suspensionSpring = frontSspring;
+		carScript.FrontRightWheelCollider.wheelColliderObject.suspensionSpring = frontSspring;
+		carScript.RearLeftWheelCollider.wheelColliderObject.suspensionSpring = rearSpring;
+		carScript.RearRightWheelCollider.wheelColliderObject.suspensionSpring = rearSpring;
 
 		EditorGUILayout.Space();
 
@@ -727,7 +727,7 @@ public class RCC_Editor : Editor {
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("lowBeamHeadLightsOn"), new GUIContent("Head Lights On"));
 		EditorGUILayout.Space();
 
-		RCC_Light[] lights = carScript.GetComponentsInChildren<RCC_Light>();
+		RCC_LightController[] lights = carScript.GetComponentsInChildren<RCC_LightController>();
 
 		EditorGUILayout.LabelField("Head Lights", EditorStyles.boldLabel);
 		EditorGUILayout.Space();
@@ -737,7 +737,7 @@ public class RCC_Editor : Editor {
 
 			EditorGUILayout.BeginHorizontal();
 
-			if (lights[i].lightType == RCC_Light.LightType.HeadLight) {
+			if (lights[i].lightTypeValue == RCC_LightController.LightType.HeadLight) {
 
 				EditorGUILayout.ObjectField("Head Light", lights[i].GetComponent<Light>(), typeof(Light), true);
 
@@ -767,7 +767,7 @@ public class RCC_Editor : Editor {
 
 			EditorGUILayout.BeginHorizontal();
 
-			if (lights[i].lightType == RCC_Light.LightType.BrakeLight) {
+			if (lights[i].lightTypeValue == RCC_LightController.LightType.BrakeLight) {
 
 				EditorGUILayout.ObjectField("Brake Light", lights[i].GetComponent<Light>(), typeof(Light), true);
 
@@ -797,7 +797,7 @@ public class RCC_Editor : Editor {
 
 			EditorGUILayout.BeginHorizontal();
 
-			if (lights[i].lightType == RCC_Light.LightType.ReverseLight) {
+			if (lights[i].lightTypeValue == RCC_LightController.LightType.ReverseLight) {
 
 				EditorGUILayout.ObjectField("Reverse Light", lights[i].GetComponent<Light>(), typeof(Light), true);
 
@@ -826,7 +826,7 @@ public class RCC_Editor : Editor {
 
 			EditorGUILayout.BeginHorizontal();
 
-			if (lights[i].lightType == RCC_Light.LightType.Indicator) {
+			if (lights[i].lightTypeValue == RCC_LightController.LightType.Indicator) {
 
 				EditorGUILayout.ObjectField("Indicator Light", lights[i].GetComponent<Light>(), typeof(Light), true);
 
@@ -880,11 +880,11 @@ public class RCC_Editor : Editor {
 
 		switch (carScript.audioType) {
 
-			case RCC_CarControllerV3.AudioType.Off:
+			case RCC_CarMainControllerV3.AudioType.Off:
 
 				break;
 
-			case RCC_CarControllerV3.AudioType.OneSource:
+			case RCC_CarMainControllerV3.AudioType.OneSource:
 
 				EditorGUILayout.PropertyField(serializedObject.FindProperty("engineClipHigh"), new GUIContent("Engine Sound"), false);
 
@@ -893,7 +893,7 @@ public class RCC_Editor : Editor {
 
 				break;
 
-			case RCC_CarControllerV3.AudioType.TwoSource:
+			case RCC_CarMainControllerV3.AudioType.TwoSource:
 
 				EditorGUILayout.PropertyField(serializedObject.FindProperty("engineClipLow"), new GUIContent("Engine Sound Low RPM"), false);
 				EditorGUILayout.PropertyField(serializedObject.FindProperty("engineClipHigh"), new GUIContent("Engine Sound High RPM"), false);
@@ -907,7 +907,7 @@ public class RCC_Editor : Editor {
 
 				break;
 
-			case RCC_CarControllerV3.AudioType.ThreeSource:
+			case RCC_CarMainControllerV3.AudioType.ThreeSource:
 
 				EditorGUILayout.PropertyField(serializedObject.FindProperty("engineClipLow"), new GUIContent("Engine Sound Low RPM"), false);
 				EditorGUILayout.PropertyField(serializedObject.FindProperty("engineClipMed"), new GUIContent("Engine Sound Medium RPM"), false);
@@ -925,7 +925,7 @@ public class RCC_Editor : Editor {
 
 		}
 
-		if (carScript.audioType != RCC_CarControllerV3.AudioType.Off) {
+		if (carScript.audioType != RCC_CarMainControllerV3.AudioType.Off) {
 
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("autoCreateEngineOffSounds"), new GUIContent("Auto Create Engine Off Sounds"), false);
 			EditorGUILayout.Space();
@@ -1064,12 +1064,12 @@ public class RCC_Editor : Editor {
 
 	void SetLayerMask(){
 
-		if (string.IsNullOrEmpty (RCC_Settings.Instance.RCCLayer)) {
+		if (string.IsNullOrEmpty (RCC_SettingsData.InstanceR.RCCLayerValue)) {
 			Debug.LogError ("RCC Layer is missing in RCC Settings. Go to Tools --> BoneCracker Games --> RCC --> Edit Settings, and set the layer of RCC.");
 			return;
 		}
 
-		if (string.IsNullOrEmpty (RCC_Settings.Instance.RCCTag)) {
+		if (string.IsNullOrEmpty (RCC_SettingsData.InstanceR.RCCTagValue)) {
 			Debug.LogError ("RCC Tag is missing in RCC Settings. Go to Tools --> BoneCracker Games --> RCC --> Edit Settings, and set the tag of RCC.");
 			return;
 		}
@@ -1078,19 +1078,19 @@ public class RCC_Editor : Editor {
 
 		foreach (Transform t in allTransforms) {
 
-			int layerInt = LayerMask.NameToLayer (RCC_Settings.Instance.RCCLayer);
+			int layerInt = LayerMask.NameToLayer (RCC_SettingsData.InstanceR.RCCLayerValue);
 
 			if (layerInt >= 0 && layerInt <= 31) {
 
-				if (!t.GetComponent<RCC_Light> ()) {
+				if (!t.GetComponent<RCC_LightController> ()) {
 				
-					t.gameObject.layer = LayerMask.NameToLayer (RCC_Settings.Instance.RCCLayer);
+					t.gameObject.layer = LayerMask.NameToLayer (RCC_SettingsData.InstanceR.RCCLayerValue);
 
 					if (!carScript.externalController) {
-						if (RCC_Settings.Instance.tagAllChildrenGameobjects)
-							t.gameObject.transform.tag = RCC_Settings.Instance.RCCTag;
+						if (RCC_SettingsData.InstanceR.tagAllChildrenGameobjectsFlag)
+							t.gameObject.transform.tag = RCC_SettingsData.InstanceR.RCCTagValue;
 						else
-							carScript.transform.gameObject.tag = RCC_Settings.Instance.RCCTag;
+							carScript.transform.gameObject.tag = RCC_SettingsData.InstanceR.RCCTagValue;
 					} else {
 						t.gameObject.transform.tag = "Untagged";
 					}
@@ -1099,13 +1099,13 @@ public class RCC_Editor : Editor {
 
 			} else {
 
-				Debug.LogError ("RCC Layer selected in RCC Settings doesn't exist on your Tags & Layers. Go to Edit --> Project Settings --> Tags & Layers, and create a new layer named ''" + RCC_Settings.Instance.RCCLayer + "''.");
+				Debug.LogError ("RCC Layer selected in RCC Settings doesn't exist on your Tags & Layers. Go to Edit --> Project Settings --> Tags & Layers, and create a new layer named ''" + RCC_SettingsData.InstanceR.RCCLayerValue + "''.");
 				Debug.LogError ("From now on, ''Setting Tags and Layers'' disabled in RCCSettings! You can enable this when you created this layer.");
 
 				foreach (Transform tr in allTransforms)
 					tr.gameObject.layer = LayerMask.NameToLayer ("Default");
 				
-				RCC_Settings.Instance.setTagsAndLayers = false;
+				RCC_SettingsData.InstanceR.setTagsAndLayersFlag = false;
 				return;
 
 			}

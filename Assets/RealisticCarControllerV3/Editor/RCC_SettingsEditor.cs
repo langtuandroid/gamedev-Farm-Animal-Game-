@@ -13,10 +13,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-[CustomEditor(typeof(RCC_Settings))]
+[CustomEditor(typeof(RCC_SettingsData))]
 public class RCC_SettingsEditor : Editor {
 
-	RCC_Settings RCCSettingsAsset;
+	RCC_SettingsData RCCSettingsAsset;
 
 	Color originalGUIColor;
 	Vector2 scrollPos;
@@ -33,33 +33,33 @@ public class RCC_SettingsEditor : Editor {
 
 	void OnEnable(){
 
-		foldGeneralSettings = RCC_Settings.Instance.foldGeneralSettings;
-		foldBehaviorSettings = RCC_Settings.Instance.foldBehaviorSettings;
-		foldControllerSettings = RCC_Settings.Instance.foldControllerSettings;
-		foldUISettings = RCC_Settings.Instance.foldUISettings;
-		foldWheelPhysics = RCC_Settings.Instance.foldWheelPhysics;
-		foldSFX = RCC_Settings.Instance.foldSFX;
-		foldOptimization = RCC_Settings.Instance.foldOptimization;
-		foldTagsAndLayers = RCC_Settings.Instance.foldTagsAndLayers;
+		foldGeneralSettings = RCC_SettingsData.InstanceR.foldGeneralSettingsFlag;
+		foldBehaviorSettings = RCC_SettingsData.InstanceR.foldBehaviorSettingsFlag;
+		foldControllerSettings = RCC_SettingsData.InstanceR.foldControllerSettingsFlag;
+		foldUISettings = RCC_SettingsData.InstanceR.foldUISettingsFlag;
+		foldWheelPhysics = RCC_SettingsData.InstanceR.foldWheelPhysicsFlag;
+		foldSFX = RCC_SettingsData.InstanceR.foldSFXFlag;
+		foldOptimization = RCC_SettingsData.InstanceR.foldOptimizationFlag;
+		foldTagsAndLayers = RCC_SettingsData.InstanceR.foldTagsAndLayersFlag;
 
 	}
 
 	void OnDestroy(){
 
-		RCC_Settings.Instance.foldBehaviorSettings = foldBehaviorSettings;
-		RCC_Settings.Instance.foldControllerSettings = foldControllerSettings;
-		RCC_Settings.Instance.foldUISettings = foldUISettings;
-		RCC_Settings.Instance.foldWheelPhysics = foldWheelPhysics;
-		RCC_Settings.Instance.foldSFX = foldSFX;
-		RCC_Settings.Instance.foldOptimization = foldOptimization;
-		RCC_Settings.Instance.foldTagsAndLayers = foldTagsAndLayers;
+		RCC_SettingsData.InstanceR.foldBehaviorSettingsFlag = foldBehaviorSettings;
+		RCC_SettingsData.InstanceR.foldControllerSettingsFlag = foldControllerSettings;
+		RCC_SettingsData.InstanceR.foldUISettingsFlag = foldUISettings;
+		RCC_SettingsData.InstanceR.foldWheelPhysicsFlag = foldWheelPhysics;
+		RCC_SettingsData.InstanceR.foldSFXFlag = foldSFX;
+		RCC_SettingsData.InstanceR.foldOptimizationFlag = foldOptimization;
+		RCC_SettingsData.InstanceR.foldTagsAndLayersFlag = foldTagsAndLayers;
 
 	}
 
 	public override void OnInspectorGUI (){
 
 		serializedObject.Update();
-		RCCSettingsAsset = (RCC_Settings)target;
+		RCCSettingsAsset = (RCC_SettingsData)target;
 
 		originalGUIColor = GUI.color;
 		EditorGUIUtility.labelWidth = 250;
@@ -85,14 +85,14 @@ public class RCC_SettingsEditor : Editor {
 
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("overrideFixedTimeStep"), new GUIContent("Override FixedTimeStep"));
 
-			if(RCCSettingsAsset.overrideFixedTimeStep)
+			if(RCCSettingsAsset.overrideFixedTimeStepFlag)
 				EditorGUILayout.PropertyField(serializedObject.FindProperty("fixedTimeStep"), new GUIContent("Fixed Timestep"));
 			
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("maxAngularVelocity"), new GUIContent("Maximum Angular Velocity"));
 
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("overrideFPS"), new GUIContent("Override FPS"));
 
-			if(RCCSettingsAsset.overrideFPS)
+			if(RCCSettingsAsset.overrideFPSFlag)
 				EditorGUILayout.PropertyField(serializedObject.FindProperty("maxFPS"), new GUIContent("Maximum FPS"));
 
 			EditorGUILayout.HelpBox("You can find all references to any mode. Open up ''RCC_Settings.cs'' and right click to any mode. Hit ''Find references'' to find all modifications.", MessageType.Info);
@@ -117,7 +117,7 @@ public class RCC_SettingsEditor : Editor {
 			EditorGUILayout.HelpBox("Using behavior preset will override wheelcollider settings, chassis joint, antirolls, and other stuff. Using ''Custom'' mode will not override anything.", MessageType.Info);
 			GUI.color = originalGUIColor;
 
-			RCCSettingsAsset.overrideBehavior = EditorGUILayout.BeginToggleGroup ("Override Behavior", RCCSettingsAsset.overrideBehavior);
+			RCCSettingsAsset.overrideBehaviorFlag = EditorGUILayout.BeginToggleGroup ("Override Behavior", RCCSettingsAsset.overrideBehaviorFlag);
 
 			EditorGUI.indentLevel++;
 			EditorGUIUtility.labelWidth = 305;
@@ -128,13 +128,13 @@ public class RCC_SettingsEditor : Editor {
 
 			GUI.color = new Color (.5f, 1f, 1f, 1f);
 
-			for (int i = 0; i < RCCSettingsAsset.behaviorTypes.Length; i++) {
+			for (int i = 0; i < RCCSettingsAsset.behaviorTypesMass.Length; i++) {
 
-				behaviorTypeStrings.Add (RCCSettingsAsset.behaviorTypes [i].behaviorName);
+				behaviorTypeStrings.Add (RCCSettingsAsset.behaviorTypesMass [i].behaviorNameValue);
 
 			}
 
-			RCCSettingsAsset.behaviorSelectedIndex = GUILayout.Toolbar (RCCSettingsAsset.behaviorSelectedIndex, behaviorTypeStrings.ToArray ());
+			RCCSettingsAsset.behaviorSelectedIndexValue = GUILayout.Toolbar (RCCSettingsAsset.behaviorSelectedIndexValue, behaviorTypeStrings.ToArray ());
 
 			EditorGUI.indentLevel--;
 			GUI.color = originalGUIColor;
@@ -157,13 +157,13 @@ public class RCC_SettingsEditor : Editor {
 
 			GUI.color = new Color(.5f, 1f, 1f, 1f);
 			GUILayout.Label("Main Controller Type", EditorStyles.boldLabel);
-			RCCSettingsAsset.controllerSelectedIndex = GUILayout.Toolbar(RCCSettingsAsset.controllerSelectedIndex, controllerTypeStrings.ToArray());
+			RCCSettingsAsset.controllerSelectedIndexValue = GUILayout.Toolbar(RCCSettingsAsset.controllerSelectedIndexValue, controllerTypeStrings.ToArray());
 			GUI.color = originalGUIColor;
 			EditorGUILayout.Space();
 
-			if(RCCSettingsAsset.controllerSelectedIndex == 0){
+			if(RCCSettingsAsset.controllerSelectedIndexValue == 0){
 
-				RCCSettingsAsset.controllerType = RCC_Settings.ControllerType.Keyboard;
+				RCCSettingsAsset.controllerTypeR = RCC_SettingsData.ControllerType.Keyboard;
 
 				EditorGUILayout.BeginVertical (GUI.skin.box);
 
@@ -203,11 +203,11 @@ public class RCC_SettingsEditor : Editor {
 
 		}
 	
-		if(RCCSettingsAsset.controllerSelectedIndex == 1){
+		if(RCCSettingsAsset.controllerSelectedIndexValue == 1){
 
 			EditorGUILayout.BeginVertical (GUI.skin.box);
 
-			RCCSettingsAsset.controllerType = RCC_Settings.ControllerType.Mobile;
+			RCCSettingsAsset.controllerTypeR = RCC_SettingsData.ControllerType.Mobile;
 
 			GUILayout.Label("Mobile Settings", EditorStyles.boldLabel);
 
@@ -233,9 +233,9 @@ public class RCC_SettingsEditor : Editor {
 
 		}
 
-		if(RCCSettingsAsset.controllerSelectedIndex == 2){
+		if(RCCSettingsAsset.controllerSelectedIndexValue == 2){
 
-				RCCSettingsAsset.controllerType = RCC_Settings.ControllerType.XBox360One;
+				RCCSettingsAsset.controllerTypeR = RCC_SettingsData.ControllerType.XBox360One;
 
 				EditorGUILayout.BeginVertical (GUI.skin.box);
 
@@ -276,9 +276,9 @@ public class RCC_SettingsEditor : Editor {
 			
 		}
 
-			if (RCCSettingsAsset.controllerSelectedIndex == 3){
+			if (RCCSettingsAsset.controllerSelectedIndexValue == 3){
 
-				RCCSettingsAsset.controllerType = RCC_Settings.ControllerType.PS4;
+				RCCSettingsAsset.controllerTypeR = RCC_SettingsData.ControllerType.PS4;
 
 				EditorGUILayout.BeginVertical(GUI.skin.box);
 
@@ -315,11 +315,11 @@ public class RCC_SettingsEditor : Editor {
 
 			}
 
-			if (RCCSettingsAsset.controllerSelectedIndex == 4){
+			if (RCCSettingsAsset.controllerSelectedIndexValue == 4){
 
 				EditorGUILayout.BeginVertical (GUI.skin.box);
 
-				RCCSettingsAsset.controllerType = RCC_Settings.ControllerType.LogitechSteeringWheel;
+				RCCSettingsAsset.controllerTypeR = RCC_SettingsData.ControllerType.LogitechSteeringWheel;
 
 				GUILayout.Label("Logitech Steering Wheel Settings", EditorStyles.boldLabel);
 
@@ -332,7 +332,7 @@ public class RCC_SettingsEditor : Editor {
 
 				if (GUILayout.Button ("Download & Import Logitech Gaming SDK")) {
 
-					string url = RCC_AssetPaths.logitech;
+					string url = RCC_AssetPathsR.logitechConst;
 					Application.OpenURL (url);
 
 				}
@@ -352,11 +352,11 @@ public class RCC_SettingsEditor : Editor {
 
 			}
 
-			if(RCCSettingsAsset.controllerSelectedIndex == 5){
+			if(RCCSettingsAsset.controllerSelectedIndexValue == 5){
 
 				EditorGUILayout.BeginVertical (GUI.skin.box);
 
-				RCCSettingsAsset.controllerType = RCC_Settings.ControllerType.Custom;
+				RCCSettingsAsset.controllerTypeR = RCC_SettingsData.ControllerType.Custom;
 
 				GUILayout.Label("Custom Input Settings", EditorStyles.boldLabel);
 
@@ -453,15 +453,15 @@ public class RCC_SettingsEditor : Editor {
 
 		if(foldWheelPhysics){
 
-			if(RCC_GroundMaterials.Instance.frictions != null && RCC_GroundMaterials.Instance.frictions.Length > 0){
+			if(RCC_GroundMaterialsData.InstanceR.frictionsMass != null && RCC_GroundMaterialsData.InstanceR.frictionsMass.Length > 0){
 
 					EditorGUILayout.BeginVertical (GUI.skin.box);
 					GUILayout.Label("Ground Physic Materials", EditorStyles.boldLabel);
 
-					physicMaterials = new PhysicMaterial[RCC_GroundMaterials.Instance.frictions.Length];
+					physicMaterials = new PhysicMaterial[RCC_GroundMaterialsData.InstanceR.frictionsMass.Length];
 					
 					for (int i = 0; i < physicMaterials.Length; i++) {
-						physicMaterials[i] = RCC_GroundMaterials.Instance.frictions[i].groundMaterial;
+						physicMaterials[i] = RCC_GroundMaterialsData.InstanceR.frictionsMass[i].groundMaterialValue;
 						EditorGUILayout.BeginVertical(GUI.skin.box);
 						EditorGUILayout.ObjectField("Ground Physic Materials " + i, physicMaterials[i], typeof(PhysicMaterial), false);
 						EditorGUILayout.EndVertical();
@@ -474,7 +474,7 @@ public class RCC_SettingsEditor : Editor {
 			GUI.color = new Color(.5f, 1f, 1f, 1f);
 			
 			if(GUILayout.Button("Configure Ground Physic Materials")){
-				Selection.activeObject = Resources.Load("RCC Assets/RCC_GroundMaterials") as RCC_GroundMaterials;
+				Selection.activeObject = Resources.Load("RCC Assets/RCC_GroundMaterials") as RCC_GroundMaterialsData;
 			}
 
 			GUI.color = originalGUIColor;
@@ -497,7 +497,7 @@ public class RCC_SettingsEditor : Editor {
 			GUI.color = new Color(.5f, 1f, 1f, 1f);
 
 			if(GUILayout.Button("Configure Wheel Slip Sounds"))
-				Selection.activeObject = Resources.Load("RCC Assets/RCC_GroundMaterials") as RCC_GroundMaterials;
+				Selection.activeObject = Resources.Load("RCC Assets/RCC_GroundMaterials") as RCC_GroundMaterialsData;
 			
 			GUI.color = originalGUIColor;
 			EditorGUILayout.Space();
@@ -571,7 +571,7 @@ public class RCC_SettingsEditor : Editor {
 
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("setTagsAndLayers"), new GUIContent("Set Tags And Layers Auto"), false);
 
-			if (RCCSettingsAsset.setTagsAndLayers) {
+			if (RCCSettingsAsset.setTagsAndLayersFlag) {
 
 				EditorGUILayout.PropertyField (serializedObject.FindProperty ("RCCLayer"), new GUIContent ("Vehicle Layer"), false);
 				EditorGUILayout.PropertyField (serializedObject.FindProperty ("RCCTag"), new GUIContent ("Vehicle Tag"), false);
@@ -637,7 +637,7 @@ public class RCC_SettingsEditor : Editor {
 
 		GUI.color = originalGUIColor;
 		
-		EditorGUILayout.LabelField("Realistic Car Controller " + RCC_Settings.RCCVersion + " \nBoneCracker Games", EditorStyles.centeredGreyMiniLabel, GUILayout.MaxHeight(50f));
+		EditorGUILayout.LabelField("Realistic Car Controller " + RCC_SettingsData.RCCVersionName + " \nBoneCracker Games", EditorStyles.centeredGreyMiniLabel, GUILayout.MaxHeight(50f));
 
 		EditorGUILayout.LabelField("Created by Buğra Özdoğanlar", EditorStyles.centeredGreyMiniLabel, GUILayout.MaxHeight(50f));
 
@@ -652,58 +652,58 @@ public class RCC_SettingsEditor : Editor {
 
 	void ResetToDefaults(){
 
-		RCCSettingsAsset.overrideFixedTimeStep = true;
-		RCCSettingsAsset.fixedTimeStep = .02f;
-		RCCSettingsAsset.maxAngularVelocity = 6f;
+		RCCSettingsAsset.overrideFixedTimeStepFlag = true;
+		RCCSettingsAsset.fixedTimeStepValue = .02f;
+		RCCSettingsAsset.maxAngularVelocityValue = 6f;
 //		RCCSettingsAsset.behaviorType = RCC_Settings.BehaviorType.Custom;
 
-		RCCSettingsAsset.verticalInput = "Vertical";
-		RCCSettingsAsset.horizontalInput = "Horizontal";
-		RCCSettingsAsset.handbrakeKB = KeyCode.Space;
-		RCCSettingsAsset.startEngineKB = KeyCode.I;
-		RCCSettingsAsset.lowBeamHeadlightsKB = KeyCode.L;
-		RCCSettingsAsset.highBeamHeadlightsKB = KeyCode.K;
-		RCCSettingsAsset.rightIndicatorKB = KeyCode.E;
-		RCCSettingsAsset.leftIndicatorKB = KeyCode.Q;
-		RCCSettingsAsset.hazardIndicatorKB = KeyCode.Z;
-		RCCSettingsAsset.shiftGearUp = KeyCode.LeftShift;
-		RCCSettingsAsset.shiftGearDown = KeyCode.LeftControl;
-		RCCSettingsAsset.NGear = KeyCode.N;
-		RCCSettingsAsset.boostKB = KeyCode.F;
-		RCCSettingsAsset.slowMotionKB = KeyCode.G;
-		RCCSettingsAsset.changeCameraKB = KeyCode.C;
-		RCCSettingsAsset.recordKB = KeyCode.R;
-		RCCSettingsAsset.playbackKB = KeyCode.P;
+		RCCSettingsAsset.verticalInputValue = "Vertical";
+		RCCSettingsAsset.horizontalInputValue = "Horizontal";
+		RCCSettingsAsset.handbrakeKBCode = KeyCode.Space;
+		RCCSettingsAsset.startEngineKBCode = KeyCode.I;
+		RCCSettingsAsset.lowBeamHeadlightsKBCode = KeyCode.L;
+		RCCSettingsAsset.highBeamHeadlightsKBCode = KeyCode.K;
+		RCCSettingsAsset.rightIndicatorKBCode = KeyCode.E;
+		RCCSettingsAsset.leftIndicatorKBCode = KeyCode.Q;
+		RCCSettingsAsset.hazardIndicatorKBCode = KeyCode.Z;
+		RCCSettingsAsset.shiftGearUpCode = KeyCode.LeftShift;
+		RCCSettingsAsset.shiftGearDownCode = KeyCode.LeftControl;
+		RCCSettingsAsset.NGearCode = KeyCode.N;
+		RCCSettingsAsset.boostKBCode = KeyCode.F;
+		RCCSettingsAsset.slowMotionKBCode = KeyCode.G;
+		RCCSettingsAsset.changeCameraKBCode = KeyCode.C;
+		RCCSettingsAsset.recordKBCode = KeyCode.R;
+		RCCSettingsAsset.playbackKBCode = KeyCode.P;
 
-		RCCSettingsAsset.useAutomaticGear = true;
-		RCCSettingsAsset.runEngineAtAwake = true;
-		RCCSettingsAsset.autoReverse = true;
-		RCCSettingsAsset.autoReset = true;
-		RCCSettingsAsset.units = RCC_Settings.Units.KMH;
-		RCCSettingsAsset.useTelemetry = false;
-		RCCSettingsAsset.mobileController = RCC_Settings.MobileController.TouchScreen;
-		RCCSettingsAsset.UIButtonSensitivity = 3f;
-		RCCSettingsAsset.UIButtonGravity = 5f;
-		RCCSettingsAsset.gyroSensitivity = 2f;
-		RCCSettingsAsset.useLightsAsVertexLights = true;
-		RCCSettingsAsset.useLightProjectorForLightingEffect = false;
-		RCCSettingsAsset.setTagsAndLayers = true;
-		RCCSettingsAsset.RCCLayer = "RCC";
-		RCCSettingsAsset.RCCTag = "Player";
-		RCCSettingsAsset.tagAllChildrenGameobjects = false;
-		RCCSettingsAsset.dontUseAnyParticleEffects = false;
-		RCCSettingsAsset.dontUseSkidmarks = false;
-		RCCSettingsAsset.maxGearShiftingSoundVolume = .25f;
-		RCCSettingsAsset.maxCrashSoundVolume = 1f;
-		RCCSettingsAsset.maxWindSoundVolume = .1f;
-		RCCSettingsAsset.maxBrakeSoundVolume = .1f;
-		RCCSettingsAsset.foldGeneralSettings = false;
-		RCCSettingsAsset.foldControllerSettings = false;
-		RCCSettingsAsset.foldUISettings = false;
-		RCCSettingsAsset.foldWheelPhysics = false;
-		RCCSettingsAsset.foldSFX = false;
-		RCCSettingsAsset.foldOptimization = false;
-		RCCSettingsAsset.foldTagsAndLayers = false;
+		RCCSettingsAsset.useAutomaticGearFlag = true;
+		RCCSettingsAsset.runEngineAtAwakeFlag = true;
+		RCCSettingsAsset.autoReverseFlag = true;
+		RCCSettingsAsset.autoResetFlag = true;
+		RCCSettingsAsset.unitsR = RCC_SettingsData.Units.KMH;
+		RCCSettingsAsset.useTelemetryObject = false;
+		RCCSettingsAsset.mobileControllerObject = RCC_SettingsData.MobileController.TouchScreen;
+		RCCSettingsAsset.UIButtonSensitivityValue = 3f;
+		RCCSettingsAsset.UIButtonGravityValue = 5f;
+		RCCSettingsAsset.gyroSensitivityValue = 2f;
+		RCCSettingsAsset.useLightsAsVertexLightsValue = true;
+		RCCSettingsAsset.useLightProjectorForLightingEffectValue = false;
+		RCCSettingsAsset.setTagsAndLayersFlag = true;
+		RCCSettingsAsset.RCCLayerValue = "RCC";
+		RCCSettingsAsset.RCCTagValue = "Player";
+		RCCSettingsAsset.tagAllChildrenGameobjectsFlag = false;
+		RCCSettingsAsset.dontUseAnyParticleEffectsFlag = false;
+		RCCSettingsAsset.dontUseSkidmarksFlag = false;
+		RCCSettingsAsset.maxGearShiftingSoundVolumeValue = .25f;
+		RCCSettingsAsset.maxCrashSoundVolumeValue = 1f;
+		RCCSettingsAsset.maxWindSoundVolumeValue = .1f;
+		RCCSettingsAsset.maxBrakeSoundVolumeValue = .1f;
+		RCCSettingsAsset.foldGeneralSettingsFlag = false;
+		RCCSettingsAsset.foldControllerSettingsFlag = false;
+		RCCSettingsAsset.foldUISettingsFlag = false;
+		RCCSettingsAsset.foldWheelPhysicsFlag = false;
+		RCCSettingsAsset.foldSFXFlag = false;
+		RCCSettingsAsset.foldOptimizationFlag = false;
+		RCCSettingsAsset.foldTagsAndLayersFlag = false;
 
 	}
 

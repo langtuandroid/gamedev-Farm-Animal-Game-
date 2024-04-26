@@ -14,16 +14,16 @@ using System.Collections;
 /// Exhaust based on Particle System. Based on vehicle controller's throttle situation.
 /// </summary>
 [AddComponentMenu("BoneCracker Games/Realistic Car Controller/Misc/RCC Exhaust")]
-public class RCC_Exhaust : RCC_Core {
+public class RCC_Exhaust : RCC_CoreMain {
 
 	// Getting an Instance of Main Shared RCC Settings.
 	#region RCC Settings Instance
 
-	private RCC_Settings RCCSettingsInstance;
-	private RCC_Settings RCCSettings {
+	private RCC_SettingsData RCCSettingsInstance;
+	private RCC_SettingsData RCCSettings {
 		get {
 			if (RCCSettingsInstance == null) {
-				RCCSettingsInstance = RCC_Settings.Instance;
+				RCCSettingsInstance = RCC_SettingsData.InstanceR;
 				return RCCSettingsInstance;
 			}
 			return RCCSettingsInstance;
@@ -32,7 +32,7 @@ public class RCC_Exhaust : RCC_Core {
 
 	#endregion
 
-	private RCC_CarControllerV3 carController;
+	private RCC_CarMainControllerV3 carController;
 	private ParticleSystem particle;
 	private ParticleSystem.EmissionModule emission;
 	public ParticleSystem flame;
@@ -63,12 +63,12 @@ public class RCC_Exhaust : RCC_Core {
 
 	void Start () {
 
-		if (RCCSettings.dontUseAnyParticleEffects) {
+		if (RCCSettings.dontUseAnyParticleEffectsFlag) {
 			Destroy (gameObject);
 			return;
 		}
 
-		carController = GetComponentInParent<RCC_CarControllerV3>();
+		carController = GetComponentInParent<RCC_CarMainControllerV3>();
 		particle = GetComponent<ParticleSystem>();
 		emission = particle.emission;
 
@@ -76,8 +76,8 @@ public class RCC_Exhaust : RCC_Core {
 
 			subEmission = flame.emission;
 			flameLight = flame.GetComponentInChildren<Light>();
-			flameSource = NewAudioSource(RCCSettings.audioMixer, gameObject, "Exhaust Flame AudioSource", 10f, 25f, .5f, RCCSettings.exhaustFlameClips[0], false, false, false);
-			flameLight.renderMode = RCCSettings.useLightsAsVertexLights ? LightRenderMode.ForceVertex : LightRenderMode.ForcePixel;
+			flameSource = CreateNewAudioSource(RCCSettings.audioMixerValue, gameObject, "Exhaust Flame AudioSource", 10f, 25f, .5f, RCCSettings.exhaustFlameClipsMass[0], false, false, false);
+			flameLight.renderMode = RCCSettings.useLightsAsVertexLightsValue ? LightRenderMode.ForceVertex : LightRenderMode.ForcePixel;
 
 		}
 
@@ -172,7 +172,7 @@ public class RCC_Exhaust : RCC_Core {
 				}
 
 				if(!flameSource.isPlaying){
-					flameSource.clip = RCCSettings.exhaustFlameClips[Random.Range(0, RCCSettings.exhaustFlameClips.Length)];
+					flameSource.clip = RCCSettings.exhaustFlameClipsMass[Random.Range(0, RCCSettings.exhaustFlameClipsMass.Length)];
 					flameSource.Play();
 				}
 
@@ -208,8 +208,8 @@ public class RCC_Exhaust : RCC_Core {
 		if (!RCC_SceneManager.Instance.activePlayerCamera)
 			return;
 
-		float distanceTocam = Vector3.Distance(transform.position, RCC_SceneManager.Instance.activePlayerCamera.thisCam.transform.position);
-		float angle = Vector3.Angle(transform.forward,  RCC_SceneManager.Instance.activePlayerCamera.thisCam.transform.position - transform.position);
+		float distanceTocam = Vector3.Distance(transform.position, RCC_SceneManager.Instance.activePlayerCamera.thisCamera.transform.position);
+		float angle = Vector3.Angle(transform.forward,  RCC_SceneManager.Instance.activePlayerCamera.thisCamera.transform.position - transform.position);
 
 		if(angle != 0)
 			finalFlareBrightness = flareBrightness * (4 / distanceTocam) * ((100f - (1.11f * angle)) / 100f) / 2f;

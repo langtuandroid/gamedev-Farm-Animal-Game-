@@ -57,7 +57,7 @@ public class RCC_Demo : MonoBehaviour {
 		lastKnownRot.x = 0f;
 		lastKnownRot.z = 0f;
 
-		RCC_CarControllerV3 lastVehicle = RCC_SceneManager.Instance.activePlayerVehicle;
+		RCC_CarMainControllerV3 lastVehicle = RCC_SceneManager.Instance.activePlayerVehicle;
 
 		#if BCG_ENTEREXIT
 
@@ -85,7 +85,7 @@ public class RCC_Demo : MonoBehaviour {
 			Destroy(lastVehicle.gameObject);
 
 		// Here we are creating our new vehicle.
-		RCC.SpawnRCC(RCC_DemoVehicles.Instance.vehicles[selectedVehicleIndex], lastKnownPos, lastKnownRot, true, true, true);
+		RCC_Manager.SpawnRCCVehicle(RCC_DemoVehiclesData.InstanceR.vehiclesMass[selectedVehicleIndex], lastKnownPos, lastKnownRot, true, true, true);
 		 
 		#if BCG_ENTEREXIT
 
@@ -124,14 +124,14 @@ public class RCC_Demo : MonoBehaviour {
 	// Here we are setting new selected behavior to corresponding one.
 	public void InitBehavior(){
 
-		RCC.SetBehavior(selectedBehaviorIndex);
+		RCC_Manager.SetBehaviorIndex(selectedBehaviorIndex);
 
 	}
 
 	//	Sets the main controller type.
 	public void SetController(int index){
 
-		RCC.SetController (index);
+		RCC_Manager.SetControllerIndex (index);
 
 	}
 
@@ -141,16 +141,16 @@ public class RCC_Demo : MonoBehaviour {
 		switch(index){
 
 		case 0:
-			RCC.SetMobileController (RCC_Settings.MobileController.TouchScreen);
+			RCC_Manager.SetMobileControllerType (RCC_SettingsData.MobileController.TouchScreen);
 			break;
 		case 1:
-			RCC.SetMobileController (RCC_Settings.MobileController.Gyro);
+			RCC_Manager.SetMobileControllerType (RCC_SettingsData.MobileController.Gyro);
 			break;
 		case 2:
-			RCC.SetMobileController (RCC_Settings.MobileController.SteeringWheel);
+			RCC_Manager.SetMobileControllerType (RCC_SettingsData.MobileController.SteeringWheel);
 			break;
 		case 3:
-			RCC.SetMobileController (RCC_Settings.MobileController.Joystick);
+			RCC_Manager.SetMobileControllerType (RCC_SettingsData.MobileController.Joystick);
 			break;
 
 		}

@@ -130,7 +130,7 @@ public class RCC_WelcomeWindow : EditorWindow{
 		EditorGUILayout.Separator ();
 
 		if (GUILayout.Button("Import Project Settings (Input Manager, Tags & Layers)"))
-			AssetDatabase.ImportPackage(RCC_AssetPaths.projectSettingsPath, true);
+			AssetDatabase.ImportPackage(RCC_AssetPathsR.projectSettingsPathConst, true);
 
 		EditorGUILayout.Separator ();
 
@@ -162,7 +162,7 @@ public class RCC_WelcomeWindow : EditorWindow{
 		GUILayout.BeginVertical("window");
 
 		GUILayout.BeginHorizontal("box");
-		GUILayout.Label("<b>Installed Version: </b>" + RCC_Settings.RCCVersion.ToString());
+		GUILayout.Label("<b>Installed Version: </b>" + RCC_SettingsData.RCCVersionName.ToString());
 		GUILayout.EndHorizontal();
 		GUILayout.Space(6);
 
@@ -182,7 +182,7 @@ public class RCC_WelcomeWindow : EditorWindow{
 		GUILayout.Space(6);
 
 		if (GUILayout.Button("Check Updates"))
-			Application.OpenURL(RCC_AssetPaths.assetStorePath);
+			Application.OpenURL(RCC_AssetPathsR.assetStorePathConst);
 
 		GUILayout.Space(6);
 		GUILayout.FlexibleSpace();
@@ -210,25 +210,25 @@ public class RCC_WelcomeWindow : EditorWindow{
 		GUILayout.BeginVertical("box");
 
 		if (GUILayout.Button ("RCC City AIO"))
-			EditorSceneManager.OpenScene (RCC_AssetPaths.demo_AIO, OpenSceneMode.Single);
+			EditorSceneManager.OpenScene (RCC_AssetPathsR.demo_AIOConst, OpenSceneMode.Single);
 
 		if (GUILayout.Button ("RCC City"))
-			EditorSceneManager.OpenScene (RCC_AssetPaths.demo_City, OpenSceneMode.Single);
+			EditorSceneManager.OpenScene (RCC_AssetPathsR.demo_CityConst, OpenSceneMode.Single);
 
 		if (GUILayout.Button ("RCC City Car Selection"))
-			EditorSceneManager.OpenScene (RCC_AssetPaths.demo_CarSelection, OpenSceneMode.Single);
+			EditorSceneManager.OpenScene (RCC_AssetPathsR.demo_CarSelectionConst, OpenSceneMode.Single);
 
 		if (GUILayout.Button ("RCC City Car Selection with Load Next Scene"))
-			EditorSceneManager.OpenScene (RCC_AssetPaths.demo_CarSelectionLoadNextScene, OpenSceneMode.Single);
+			EditorSceneManager.OpenScene (RCC_AssetPathsR.demo_CarSelectionLoadNextSceneConst, OpenSceneMode.Single);
 
 		if (GUILayout.Button ("RCC City Car Selection with Loaded Scene"))
-			EditorSceneManager.OpenScene (RCC_AssetPaths.demo_CarSelectionLoadedScene, OpenSceneMode.Single);
+			EditorSceneManager.OpenScene (RCC_AssetPathsR.demo_CarSelectionLoadedSceneConst, OpenSceneMode.Single);
 
 		if (GUILayout.Button ("RCC Blank API"))
-			EditorSceneManager.OpenScene (RCC_AssetPaths.demo_APIBlank, OpenSceneMode.Single);
+			EditorSceneManager.OpenScene (RCC_AssetPathsR.demo_APIBlankConst, OpenSceneMode.Single);
 
 		if (GUILayout.Button ("RCC Blank Test Scene"))
-			EditorSceneManager.OpenScene (RCC_AssetPaths.demo_BlankMobile, OpenSceneMode.Single);
+			EditorSceneManager.OpenScene (RCC_AssetPathsR.demo_BlankMobileConst, OpenSceneMode.Single);
 
 		GUILayout.EndVertical ();
 
@@ -237,17 +237,17 @@ public class RCC_WelcomeWindow : EditorWindow{
 		if (BCGInstalled) {
 
 			if (GUILayout.Button ("RCC City Enter-Exit FPS"))
-				EditorSceneManager.OpenScene (RCC_AssetPaths.demo_CityFPS, OpenSceneMode.Single);
+				EditorSceneManager.OpenScene (RCC_AssetPathsR.demo_CityFPSConst, OpenSceneMode.Single);
 
 			if (GUILayout.Button ("RCC City Enter-Exit TPS"))
-				EditorSceneManager.OpenScene (RCC_AssetPaths.demo_CityTPS, OpenSceneMode.Single);
+				EditorSceneManager.OpenScene (RCC_AssetPathsR.demo_CityTPSConst, OpenSceneMode.Single);
 
 		} else {
 
 			EditorGUILayout.HelpBox ("You have to import latest BCG Shared Assets to your project first.", MessageType.Warning);
 
 			if (GUILayout.Button ("Download and import BCG Shared Assets"))
-				AssetDatabase.ImportPackage(RCC_AssetPaths.BCGSharedAssetsPath, true);
+				AssetDatabase.ImportPackage(RCC_AssetPathsR.BCGSharedAssetsPathConst, true);
 
 		}
 
@@ -257,14 +257,14 @@ public class RCC_WelcomeWindow : EditorWindow{
 		if (photonInstalled) {
 
 			if (GUILayout.Button ("RCC City Photon PUN 2"))
-				EditorSceneManager.OpenScene (RCC_AssetPaths.demo_PUN2, OpenSceneMode.Single);
+				EditorSceneManager.OpenScene (RCC_AssetPathsR.demo_PUN2Const, OpenSceneMode.Single);
 
 		} else {
 
 			EditorGUILayout.HelpBox ("You have to import latest Photon PUN2 to your project first.", MessageType.Warning);
 
 			if (GUILayout.Button ("Download and import Photon PUN2"))
-				Application.OpenURL (RCC_AssetPaths.photonPUN2);
+				Application.OpenURL (RCC_AssetPathsR.photonPUN2Const);
 
 		}
 
@@ -291,7 +291,7 @@ public class RCC_WelcomeWindow : EditorWindow{
 			EditorGUILayout.HelpBox ("You have to import latest BCG Shared Assets to your project first.", MessageType.Warning);
 
 			if (GUILayout.Button ("Download and import BCG Shared Assets"))
-				AssetDatabase.ImportPackage(RCC_AssetPaths.BCGSharedAssetsPath, true);
+				AssetDatabase.ImportPackage(RCC_AssetPathsR.BCGSharedAssetsPathConst, true);
 
 		} else {
 
@@ -323,14 +323,14 @@ public class RCC_WelcomeWindow : EditorWindow{
 			EditorGUILayout.HelpBox ("You have to import latest Photon PUN2 to your project first.", MessageType.Warning);
 
 			if (GUILayout.Button ("Download and import Photon PUN2"))
-				Application.OpenURL (RCC_AssetPaths.photonPUN2);
+				Application.OpenURL (RCC_AssetPathsR.photonPUN2Const);
 
 		} else {
 
 			EditorGUILayout.HelpBox ("Found Photon PUN2, You can import integration package and open Photon demo scenes now.", MessageType.Info);
 
             if (GUILayout.Button("Import Photon PUN2 Integration"))
-                AssetDatabase.ImportPackage(RCC_AssetPaths.PUN2AssetsPath, true);
+                AssetDatabase.ImportPackage(RCC_AssetPathsR.PUN2AssetsPathConst, true);
 
         }
 
@@ -349,19 +349,19 @@ public class RCC_WelcomeWindow : EditorWindow{
 		EditorGUILayout.HelpBox("Latest online documentations for scripts, settings, setup, how to do, and API.", MessageType.Info);
 
 		if (GUILayout.Button("Documentation"))
-			Application.OpenURL(RCC_AssetPaths.documentations);
+			Application.OpenURL(RCC_AssetPathsR.documentationsConst);
 
 		if (GUILayout.Button("Scripts"))
-			Application.OpenURL(RCC_AssetPaths.scripts);
+			Application.OpenURL(RCC_AssetPathsR.scriptsConst);
 
 		if (GUILayout.Button("API"))
-			Application.OpenURL(RCC_AssetPaths.API);
+			Application.OpenURL(RCC_AssetPathsR.APIConst);
 
 		if (GUILayout.Button("Youtube Tutorial Videos"))           
-			Application.OpenURL(RCC_AssetPaths.YTVideos);
+			Application.OpenURL(RCC_AssetPathsR.YTVideosConst);
 
 		if (GUILayout.Button("Other Assets"))           
-			Application.OpenURL(RCC_AssetPaths.otherAssets);
+			Application.OpenURL(RCC_AssetPathsR.otherAssetsConst);
 
 		GUILayout.EndVertical();
 
@@ -418,7 +418,7 @@ public class RCC_WelcomeWindow : EditorWindow{
 
 		Debug.LogWarning("Deleting demo contents...");
 
-		foreach (var item in RCC_AssetPaths.demoAssetPaths)
+		foreach (var item in RCC_AssetPathsR.demoAssetPathsConst)
 			FileUtil.DeleteFileOrDirectory (item);
 
 		AssetDatabase.Refresh ();

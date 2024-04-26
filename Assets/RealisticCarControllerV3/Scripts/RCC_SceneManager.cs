@@ -45,24 +45,24 @@ public class RCC_SceneManager : MonoBehaviour {
 
 	#endregion
 
-	public RCC_CarControllerV3 activePlayerVehicle;
-	private RCC_CarControllerV3 lastActivePlayerVehicle;
-	public RCC_Camera activePlayerCamera;
-	public RCC_UIDashboardDisplay activePlayerCanvas;
+	public RCC_CarMainControllerV3 activePlayerVehicle;
+	private RCC_CarMainControllerV3 lastActivePlayerVehicle;
+	public RCC_CameraController activePlayerCamera;
+	public RCC_UIDashboardDisplayController activePlayerCanvas;
 	public Camera activeMainCamera;
 
 	public bool registerFirstVehicleAsPlayer = true;
 	public bool disableUIWhenNoPlayerVehicle = false;
 	public bool loadCustomizationAtFirst = true;
 
-	public List <RCC_Recorder> allRecorders = new List<RCC_Recorder> ();
+	public List <RCC_RecorderController> allRecorders = new List<RCC_RecorderController> ();
 	public enum RecordMode{Neutral, Play, Record}
 	public RecordMode recordMode;
 
 	// Default time scale of the game.
 	private float orgTimeScale = 1f;
 
-	public List <RCC_CarControllerV3> allVehicles = new List<RCC_CarControllerV3> ();
+	public List <RCC_CarMainControllerV3> allVehicles = new List<RCC_CarMainControllerV3> ();
 
 	#if BCG_ENTEREXIT
 	public BCG_EnterExitPlayer activePlayerCharacter;
@@ -82,19 +82,19 @@ public class RCC_SceneManager : MonoBehaviour {
 
 	void Awake(){
 
-		if(RCC_Settings.Instance.overrideFPS)
-			Application.targetFrameRate = RCC_Settings.Instance.maxFPS;
+		if(RCC_SettingsData.InstanceR.overrideFPSFlag)
+			Application.targetFrameRate = RCC_SettingsData.InstanceR.maxFPSValue;
 
-		if (RCC_Settings.Instance.useTelemetry)
-			GameObject.Instantiate (RCC_Settings.Instance.RCCTelemetry, Vector3.zero, Quaternion.identity);
+		if (RCC_SettingsData.InstanceR.useTelemetryObject)
+			GameObject.Instantiate (RCC_SettingsData.InstanceR.RCCTelemetryObject, Vector3.zero, Quaternion.identity);
 
-		RCC_Camera.OnBCGCameraSpawned += RCC_Camera_OnBCGCameraSpawned;
+		RCC_CameraController.OnBCGCameraSpawnedEvent += RCC_Camera_OnBCGCameraSpawned;
 
-		RCC_CarControllerV3.OnRCCPlayerSpawned += RCC_CarControllerV3_OnRCCSpawned;
-		RCC_AICarController.OnRCCAISpawned += RCC_AICarController_OnRCCAISpawned;
-		RCC_CarControllerV3.OnRCCPlayerDestroyed += RCC_CarControllerV3_OnRCCPlayerDestroyed;
-		RCC_AICarController.OnRCCAIDestroyed += RCC_AICarController_OnRCCAIDestroyed;
-		activePlayerCanvas = GameObject.FindObjectOfType<RCC_UIDashboardDisplay> ();
+		RCC_CarMainControllerV3.OnRCCPlayerSpawned += RCC_CarControllerV3_OnRCCSpawned;
+		RCC_AICarMovementController.OnRCCAISpawnedEvent += RCC_AICarController_OnRCCAISpawned;
+		RCC_CarMainControllerV3.OnRCCPlayerDestroyed += RCC_CarControllerV3_OnRCCPlayerDestroyed;
+		RCC_AICarMovementController.OnRCCAIDestroyedEvent += RCC_AICarController_OnRCCAIDestroyed;
+		activePlayerCanvas = GameObject.FindObjectOfType<RCC_UIDashboardDisplayController> ();
 
 		#if BCG_ENTEREXIT
 		BCG_EnterExitPlayer.OnBCGPlayerSpawned += BCG_EnterExitPlayer_OnBCGPlayerSpawned;
@@ -104,33 +104,33 @@ public class RCC_SceneManager : MonoBehaviour {
 		// Getting default time scale of the game.
 		orgTimeScale = Time.timeScale;
 
-		if(RCC_Settings.Instance.lockAndUnlockCursor)
+		if(RCC_SettingsData.InstanceR.lockAndUnlockCursorFlag)
 			Cursor.lockState = CursorLockMode.Locked;
 
 		#if ENABLE_VR
-		UnityEngine.XR.XRSettings.enabled = RCC_Settings.Instance.useVR;
+		UnityEngine.XR.XRSettings.enabled = RCC_SettingsData.InstanceR.useVRFlag;
 		#endif
 		
 	}
 
 	#region ONSPAWNED
 
-	void RCC_CarControllerV3_OnRCCSpawned (RCC_CarControllerV3 RCC){
+	void RCC_CarControllerV3_OnRCCSpawned (RCC_CarMainControllerV3 RCC){
 		
 		if (!allVehicles.Contains (RCC)) {
 			
 			allVehicles.Add (RCC);
 
-			allRecorders = new List<RCC_Recorder> ();
-			allRecorders.AddRange (gameObject.GetComponentsInChildren<RCC_Recorder> ());
+			allRecorders = new List<RCC_RecorderController> ();
+			allRecorders.AddRange (gameObject.GetComponentsInChildren<RCC_RecorderController> ());
 
-			RCC_Recorder recorder = null;
+			RCC_RecorderController recorder = null;
 
 			if (allRecorders != null && allRecorders.Count > 0) {
 
 				for (int i = 0; i < allRecorders.Count; i++) {
 				
-					if (allRecorders[i] != null && allRecorders [i].carController == RCC) {
+					if (allRecorders[i] != null && allRecorders [i].carControllerMain == RCC) {
 						recorder = allRecorders [i];
 						break;
 					}
@@ -141,8 +141,8 @@ public class RCC_SceneManager : MonoBehaviour {
 
 			if (recorder == null) {
 				
-				recorder = gameObject.AddComponent<RCC_Recorder> ();
-				recorder.carController = RCC;
+				recorder = gameObject.AddComponent<RCC_RecorderController> ();
+				recorder.carControllerMain = RCC;
 
 			}
 
@@ -160,22 +160,22 @@ public class RCC_SceneManager : MonoBehaviour {
 
 	}
 
-	void RCC_AICarController_OnRCCAISpawned (RCC_AICarController RCCAI){
+	void RCC_AICarController_OnRCCAISpawned (RCC_AICarMovementController RCCAI){
 		
-		if (!allVehicles.Contains (RCCAI.carController)) {
+		if (!allVehicles.Contains (RCCAI.carMainController)) {
 			
-			allVehicles.Add (RCCAI.carController);
+			allVehicles.Add (RCCAI.carMainController);
 
-			allRecorders = new List<RCC_Recorder> ();
-			allRecorders.AddRange (gameObject.GetComponentsInChildren<RCC_Recorder> ());
+			allRecorders = new List<RCC_RecorderController> ();
+			allRecorders.AddRange (gameObject.GetComponentsInChildren<RCC_RecorderController> ());
 
-			RCC_Recorder recorder = null;
+			RCC_RecorderController recorder = null;
 
 			if (allRecorders != null && allRecorders.Count > 0) {
 
 				for (int i = 0; i < allRecorders.Count; i++) {
 
-					if (allRecorders [i] != null && allRecorders [i].carController == RCCAI.carController) {
+					if (allRecorders [i] != null && allRecorders [i].carControllerMain == RCCAI.carMainController) {
 						recorder = allRecorders [i];
 						break;
 					}
@@ -186,8 +186,8 @@ public class RCC_SceneManager : MonoBehaviour {
 
 			if (recorder == null) {
 
-				recorder = gameObject.AddComponent<RCC_Recorder> ();
-				recorder.carController = RCCAI.carController;
+				recorder = gameObject.AddComponent<RCC_RecorderController> ();
+				recorder.carControllerMain = RCCAI.carMainController;
 
 			}
 
@@ -199,7 +199,7 @@ public class RCC_SceneManager : MonoBehaviour {
 
 	void RCC_Camera_OnBCGCameraSpawned (GameObject BCGCamera){
 
-		activePlayerCamera = BCGCamera.GetComponent<RCC_Camera>();
+		activePlayerCamera = BCGCamera.GetComponent<RCC_CameraController>();
 
 	}
 
@@ -215,7 +215,7 @@ public class RCC_SceneManager : MonoBehaviour {
 
 	#region ONDESTROYED
 
-	void RCC_CarControllerV3_OnRCCPlayerDestroyed (RCC_CarControllerV3 RCC){
+	void RCC_CarControllerV3_OnRCCPlayerDestroyed (RCC_CarMainControllerV3 RCC){
 		
 		if (allVehicles.Contains (RCC))
 			allVehicles.Remove (RCC);
@@ -224,10 +224,10 @@ public class RCC_SceneManager : MonoBehaviour {
 
 	}
 
-	void RCC_AICarController_OnRCCAIDestroyed (RCC_AICarController RCCAI){
+	void RCC_AICarController_OnRCCAIDestroyed (RCC_AICarMovementController RCCAI){
 		
-		if (allVehicles.Contains (RCCAI.carController))
-			allVehicles.Remove (RCCAI.carController);
+		if (allVehicles.Contains (RCCAI.carMainController))
+			allVehicles.Remove (RCCAI.carMainController);
 
 		StartCoroutine(CheckMissingRecorders ());
 
@@ -259,16 +259,16 @@ public class RCC_SceneManager : MonoBehaviour {
 		if(disableUIWhenNoPlayerVehicle && activePlayerCanvas)
 			CheckCanvas ();
 
-		if (Input.GetKeyDown (RCC_Settings.Instance.recordKB))
-			RCC.StartStopRecord ();
+		if (Input.GetKeyDown (RCC_SettingsData.InstanceR.recordKBCode))
+			RCC_Manager.StartStopRecordPlayer ();
 
-		if (Input.GetKeyDown (RCC_Settings.Instance.playbackKB))
-			RCC.StartStopReplay ();
+		if (Input.GetKeyDown (RCC_SettingsData.InstanceR.playbackKBCode))
+			RCC_Manager.StartStopReplayPlayer ();
 
-		if (Input.GetKey (RCC_Settings.Instance.slowMotionKB))
+		if (Input.GetKey (RCC_SettingsData.InstanceR.slowMotionKBCode))
 			Time.timeScale = .2f;
 
-		if (Input.GetKeyUp (RCC_Settings.Instance.slowMotionKB))
+		if (Input.GetKeyUp (RCC_SettingsData.InstanceR.slowMotionKBCode))
 			Time.timeScale = orgTimeScale;
 
 		if(Input.GetButtonDown("Cancel"))
@@ -278,21 +278,21 @@ public class RCC_SceneManager : MonoBehaviour {
 
 		if (allRecorders != null && allRecorders.Count > 0) {
 
-			switch (allRecorders [0].mode) {
+			switch (allRecorders [0].modeR) {
 
-			case RCC_Recorder.Mode.Neutral:
+			case RCC_RecorderController.Mode.Neutral:
 
 				recordMode = RecordMode.Neutral;
 
 				break;
 
-			case RCC_Recorder.Mode.Play:
+			case RCC_RecorderController.Mode.Play:
 
 				recordMode = RecordMode.Play;
 
 				break;
 
-			case RCC_Recorder.Mode.Record:
+			case RCC_RecorderController.Mode.Record:
 
 				recordMode = RecordMode.Record;
 
@@ -309,7 +309,7 @@ public class RCC_SceneManager : MonoBehaviour {
 		if (allRecorders != null && allRecorders.Count > 0) {
 
 			for (int i = 0; i < allRecorders.Count; i++)
-				allRecorders [i].Record ();
+				allRecorders [i].RecordSwitch ();
 
 		}
 
@@ -320,7 +320,7 @@ public class RCC_SceneManager : MonoBehaviour {
 		if (allRecorders != null && allRecorders.Count > 0) {
 
 			for (int i = 0; i < allRecorders.Count; i++)
-				allRecorders [i].Play ();
+				allRecorders [i].PlayR ();
 
 		}
 
@@ -331,7 +331,7 @@ public class RCC_SceneManager : MonoBehaviour {
 		if (allRecorders != null && allRecorders.Count > 0) {
 
 			for (int i = 0; i < allRecorders.Count; i++)
-				allRecorders [i].Stop ();
+				allRecorders [i].StopR ();
 
 		}
 
@@ -341,14 +341,14 @@ public class RCC_SceneManager : MonoBehaviour {
 		
 		yield return new WaitForFixedUpdate ();
 
-		allRecorders = new List<RCC_Recorder> ();
-		allRecorders.AddRange (gameObject.GetComponentsInChildren<RCC_Recorder> ());
+		allRecorders = new List<RCC_RecorderController> ();
+		allRecorders.AddRange (gameObject.GetComponentsInChildren<RCC_RecorderController> ());
 
 		if (allRecorders != null && allRecorders.Count > 0) {
 
 			for (int i = 0; i < allRecorders.Count; i++) {
 
-				if (allRecorders [i].carController == null)
+				if (allRecorders [i].carControllerMain == null)
 					Destroy (allRecorders [i]);
 
 			}
@@ -356,17 +356,17 @@ public class RCC_SceneManager : MonoBehaviour {
 		}
 		yield return new WaitForFixedUpdate ();
 
-		allRecorders = new List<RCC_Recorder> ();
-		allRecorders.AddRange (gameObject.GetComponentsInChildren<RCC_Recorder> ());
+		allRecorders = new List<RCC_RecorderController> ();
+		allRecorders.AddRange (gameObject.GetComponentsInChildren<RCC_RecorderController> ());
 
 	}
 
-	public void RegisterPlayer(RCC_CarControllerV3 playerVehicle){
+	public void RegisterPlayer(RCC_CarMainControllerV3 playerVehicle){
 
 		activePlayerVehicle = playerVehicle;
 
 		if(activePlayerCamera)
-			activePlayerCamera.SetTarget (activePlayerVehicle.gameObject);
+			activePlayerCamera.SetTargetObject (activePlayerVehicle.gameObject);
 
 		if (loadCustomizationAtFirst)
 			RCC_Customization.LoadStats (RCC_SceneManager.Instance.activePlayerVehicle);
@@ -376,27 +376,27 @@ public class RCC_SceneManager : MonoBehaviour {
 
 	}
 
-	public void RegisterPlayer(RCC_CarControllerV3 playerVehicle, bool isControllable){
+	public void RegisterPlayer(RCC_CarMainControllerV3 playerVehicle, bool isControllable){
 
 		activePlayerVehicle = playerVehicle;
 		activePlayerVehicle.SetCanControl(isControllable);
 
 		if(activePlayerCamera)
-			activePlayerCamera.SetTarget (activePlayerVehicle.gameObject);
+			activePlayerCamera.SetTargetObject (activePlayerVehicle.gameObject);
 
 		if (GameObject.FindObjectOfType<RCC_CustomizerExample> ()) 
 			GameObject.FindObjectOfType<RCC_CustomizerExample> ().CheckUIs ();
 
 	}
 
-	public void RegisterPlayer(RCC_CarControllerV3 playerVehicle, bool isControllable, bool engineState){
+	public void RegisterPlayer(RCC_CarMainControllerV3 playerVehicle, bool isControllable, bool engineState){
 
 		activePlayerVehicle = playerVehicle;
 		activePlayerVehicle.SetCanControl(isControllable);
 		activePlayerVehicle.SetEngine (engineState);
 
 		if(activePlayerCamera)
-			activePlayerCamera.SetTarget (activePlayerVehicle.gameObject);
+			activePlayerCamera.SetTargetObject (activePlayerVehicle.gameObject);
 
 		if (GameObject.FindObjectOfType<RCC_CustomizerExample> ()) 
 			GameObject.FindObjectOfType<RCC_CustomizerExample> ().CheckUIs ();
@@ -411,7 +411,7 @@ public class RCC_SceneManager : MonoBehaviour {
 		activePlayerVehicle = null;
 
 		if (activePlayerCamera)
-			activePlayerCamera.RemoveTarget ();
+			activePlayerCamera.RemoveTargetObject ();
 
 	}
 
@@ -422,7 +422,7 @@ public class RCC_SceneManager : MonoBehaviour {
 //			if (activePlayerCanvas.displayType == RCC_UIDashboardDisplay.DisplayType.Full)
 //				activePlayerCanvas.SetDisplayType(RCC_UIDashboardDisplay.DisplayType.Off);
 
-			activePlayerCanvas.SetDisplayType(RCC_UIDashboardDisplay.DisplayType.Off);
+			activePlayerCanvas.SetDisplayTypeValue(RCC_UIDashboardDisplayController.DisplayType.Off);
 
 			return;
 
@@ -431,8 +431,8 @@ public class RCC_SceneManager : MonoBehaviour {
 //		if(!activePlayerCanvas.gameObject.activeInHierarchy)
 //			activePlayerCanvas.displayType = RCC_UIDashboardDisplay.DisplayType.Full;
 
-		if(activePlayerCanvas.displayType != RCC_UIDashboardDisplay.DisplayType.Customization)
-			activePlayerCanvas.displayType = RCC_UIDashboardDisplay.DisplayType.Full;
+		if(activePlayerCanvas.displayTypeData != RCC_UIDashboardDisplayController.DisplayType.Customization)
+			activePlayerCanvas.displayTypeData = RCC_UIDashboardDisplayController.DisplayType.Full;
 
 	}
 
@@ -441,8 +441,8 @@ public class RCC_SceneManager : MonoBehaviour {
 	///</summary>
 	public static void SetBehavior(int behaviorIndex){
 
-		RCC_Settings.Instance.overrideBehavior = true;
-		RCC_Settings.Instance.behaviorSelectedIndex = behaviorIndex;
+		RCC_SettingsData.InstanceR.overrideBehaviorFlag = true;
+		RCC_SettingsData.InstanceR.behaviorSelectedIndexValue = behaviorIndex;
 
 		if (OnBehaviorChanged != null)
 			OnBehaviorChanged ();
@@ -454,32 +454,32 @@ public class RCC_SceneManager : MonoBehaviour {
 	///</summary>
 	public static void SetController(int controllerIndex){
 
-		RCC_Settings.Instance.controllerSelectedIndex = controllerIndex;
+		RCC_SettingsData.InstanceR.controllerSelectedIndexValue = controllerIndex;
 
 		switch (controllerIndex) {
 
 		case 0:
-			RCC_Settings.Instance.selectedControllerType = RCC_Settings.ControllerType.Keyboard;
+			RCC_SettingsData.InstanceR.selectedControllerTypeR = RCC_SettingsData.ControllerType.Keyboard;
 			break;
 
 		case 1:
-			RCC_Settings.Instance.selectedControllerType = RCC_Settings.ControllerType.Mobile;
+			RCC_SettingsData.InstanceR.selectedControllerTypeR = RCC_SettingsData.ControllerType.Mobile;
 			break;
 
 		case 2:
-			RCC_Settings.Instance.selectedControllerType = RCC_Settings.ControllerType.XBox360One;
+			RCC_SettingsData.InstanceR.selectedControllerTypeR = RCC_SettingsData.ControllerType.XBox360One;
 			break;
 
 		case 3:
-			RCC_Settings.Instance.selectedControllerType = RCC_Settings.ControllerType.PS4;
+			RCC_SettingsData.InstanceR.selectedControllerTypeR = RCC_SettingsData.ControllerType.PS4;
 			break;
 
 			case 4:
-			RCC_Settings.Instance.selectedControllerType = RCC_Settings.ControllerType.LogitechSteeringWheel;
+			RCC_SettingsData.InstanceR.selectedControllerTypeR = RCC_SettingsData.ControllerType.LogitechSteeringWheel;
 			break;
 
 		case 5:
-			RCC_Settings.Instance.selectedControllerType = RCC_Settings.ControllerType.Custom;
+			RCC_SettingsData.InstanceR.selectedControllerTypeR = RCC_SettingsData.ControllerType.Custom;
 			break;
 
 		}
@@ -493,7 +493,7 @@ public class RCC_SceneManager : MonoBehaviour {
 	public void ChangeCamera () {
 
 		if(RCC_SceneManager.Instance.activePlayerCamera)
-			RCC_SceneManager.Instance.activePlayerCamera.ChangeCamera();
+			RCC_SceneManager.Instance.activePlayerCamera.ChangeCameraObject();
 
 	}
 
@@ -522,7 +522,7 @@ public class RCC_SceneManager : MonoBehaviour {
 	/// <param name="vehicle"></param>
 	/// <param name="position"></param>
 	/// <param name="rotation"></param>
-	public void Transport(RCC_CarControllerV3 vehicle, Vector3 position, Quaternion rotation) {
+	public void Transport(RCC_CarMainControllerV3 vehicle, Vector3 position, Quaternion rotation) {
 
 		if (vehicle) {
 
@@ -538,12 +538,12 @@ public class RCC_SceneManager : MonoBehaviour {
 
 	void OnDisable(){
 
-		RCC_Camera.OnBCGCameraSpawned -= RCC_Camera_OnBCGCameraSpawned;
+		RCC_CameraController.OnBCGCameraSpawnedEvent -= RCC_Camera_OnBCGCameraSpawned;
 
-		RCC_CarControllerV3.OnRCCPlayerSpawned -= RCC_CarControllerV3_OnRCCSpawned;
-		RCC_AICarController.OnRCCAISpawned -= RCC_AICarController_OnRCCAISpawned;
-		RCC_CarControllerV3.OnRCCPlayerDestroyed -= RCC_CarControllerV3_OnRCCPlayerDestroyed;
-		RCC_AICarController.OnRCCAIDestroyed -= RCC_AICarController_OnRCCAIDestroyed;
+		RCC_CarMainControllerV3.OnRCCPlayerSpawned -= RCC_CarControllerV3_OnRCCSpawned;
+		RCC_AICarMovementController.OnRCCAISpawnedEvent -= RCC_AICarController_OnRCCAISpawned;
+		RCC_CarMainControllerV3.OnRCCPlayerDestroyed -= RCC_CarControllerV3_OnRCCPlayerDestroyed;
+		RCC_AICarMovementController.OnRCCAIDestroyedEvent -= RCC_AICarController_OnRCCAIDestroyed;
 
 		#if BCG_ENTEREXIT
 		BCG_EnterExitPlayer.OnBCGPlayerSpawned -= BCG_EnterExitPlayer_OnBCGPlayerSpawned;

@@ -35,16 +35,16 @@ public class RCC_FixedCamera : MonoBehaviour {
 			return;
 
 		Transform target = null;
-		float speed = RCC_SceneManager.Instance.activePlayerCamera.playerCar.speed;
+		float speed = RCC_SceneManager.Instance.activePlayerCamera.playerCarController.speed;
 
-		target = RCC_SceneManager.Instance.activePlayerCamera.playerCar.transform;
+		target = RCC_SceneManager.Instance.activePlayerCamera.playerCarController.transform;
 
 		if (target == null)
 			return;
 
 		distance = Vector3.Distance (transform.position, target.position);
 
-		RCC_SceneManager.Instance.activePlayerCamera.targetFieldOfView = Mathf.Lerp (distance > maxDistance / 10f ? maximumFOV : 70f, minimumFOV, (distance * 1.5f) / maxDistance);
+		RCC_SceneManager.Instance.activePlayerCamera.targetFieldOfViewValue = Mathf.Lerp (distance > maxDistance / 10f ? maximumFOV : 70f, minimumFOV, (distance * 1.5f) / maxDistance);
 			
 		targetPosition = target.transform.position;
 		targetPosition += target.transform.rotation * Vector3.forward * (speed * .05f);
@@ -68,8 +68,8 @@ public class RCC_FixedCamera : MonoBehaviour {
 
 		Transform target = null;
 
-		if(RCC_SceneManager.Instance.activePlayerCamera.playerCar)
-			target = RCC_SceneManager.Instance.activePlayerCamera.playerCar.transform;
+		if(RCC_SceneManager.Instance.activePlayerCamera.playerCarController)
+			target = RCC_SceneManager.Instance.activePlayerCamera.playerCarController.transform;
 
 		if (target == null)
 			return;

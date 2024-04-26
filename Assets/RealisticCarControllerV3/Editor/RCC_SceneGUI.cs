@@ -112,7 +112,7 @@ public class RCC_SceneGUI : EditorWindow{
 
 		if (Selection.activeGameObject != null) {
 
-			if (Selection.activeGameObject.GetComponentInParent<RCC_CarControllerV3> ()) {
+			if (Selection.activeGameObject.GetComponentInParent<RCC_CarMainControllerV3> ()) {
 
 				if (GUILayout.Button (new GUIContent (hoodCameraIcon, "Add/Select Hood Camera attached to selected vehicle")))
 					RCC_EditorWindows.CreateHoodCamera ();
@@ -136,9 +136,9 @@ public class RCC_SceneGUI : EditorWindow{
 					RCC_EditorWindows.CreateExhaust ();
 
 				if (GUILayout.Button (new GUIContent (mirrorIcon, "Add/Select mirrors attached to selected vehicle")))
-					RCC_EditorWindows.CreateMirrors (Selection.activeGameObject.GetComponentInParent<RCC_CarControllerV3> ().gameObject);
+					RCC_EditorWindows.CreateMirrors (Selection.activeGameObject.GetComponentInParent<RCC_CarMainControllerV3> ().gameObject);
 
-				if (Selection.activeGameObject.GetComponent<RCC_Light> ()) {
+				if (Selection.activeGameObject.GetComponent<RCC_LightController> ()) {
 
 					if (GUILayout.Button (new GUIContent (indicatorlightIcon, "Duplicate light to opposite direction"))) {
 						

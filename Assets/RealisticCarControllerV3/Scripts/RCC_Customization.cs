@@ -20,7 +20,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Set Customization Mode. This will enable / disable controlling the vehicle, and enable / disable orbit camera mode.
 	/// </summary>
-	public static void SetCustomizationMode(RCC_CarControllerV3 vehicle, bool state){
+	public static void SetCustomizationMode(RCC_CarMainControllerV3 vehicle, bool state){
 
 		if (!vehicle) {
 			
@@ -29,18 +29,18 @@ public class RCC_Customization : MonoBehaviour {
 
 		}
 
-		RCC_Camera cam = RCC_SceneManager.Instance.activePlayerCamera;
-		RCC_UIDashboardDisplay UI = RCC_SceneManager.Instance.activePlayerCanvas;
+		RCC_CameraController cam = RCC_SceneManager.Instance.activePlayerCamera;
+		RCC_UIDashboardDisplayController UI = RCC_SceneManager.Instance.activePlayerCanvas;
 
 		if (state) {
 
 			vehicle.SetCanControl (false);
 
 			if (cam)
-				cam.ChangeCamera (RCC_Camera.CameraMode.TPS);
+				cam.ChangeCameraObject (RCC_CameraController.CameraMode.TPS);
 
 			if (UI)
-				UI.SetDisplayType(RCC_UIDashboardDisplay.DisplayType.Customization);
+				UI.SetDisplayTypeValue(RCC_UIDashboardDisplayController.DisplayType.Customization);
 
 		} else {
 
@@ -49,10 +49,10 @@ public class RCC_Customization : MonoBehaviour {
 			vehicle.SetCanControl (true);
 
 			if (cam)
-				cam.ChangeCamera (RCC_Camera.CameraMode.TPS);
+				cam.ChangeCameraObject (RCC_CameraController.CameraMode.TPS);
 
 			if (UI)
-				UI.SetDisplayType(RCC_UIDashboardDisplay.DisplayType.Full);
+				UI.SetDisplayTypeValue(RCC_UIDashboardDisplayController.DisplayType.Full);
 
 		}
 
@@ -61,7 +61,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	///	 Updates RCC while vehicle is inactive.
 	/// </summary>
-	public static void OverrideRCC (RCC_CarControllerV3 vehicle) {
+	public static void OverrideRCC (RCC_CarMainControllerV3 vehicle) {
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -71,7 +71,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	///	 Enable / Disable Smoke Particles. You can use it for previewing current wheel smokes.
 	/// </summary>
-	public static void SetSmokeParticle (RCC_CarControllerV3 vehicle, bool state) {
+	public static void SetSmokeParticle (RCC_CarMainControllerV3 vehicle, bool state) {
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -83,18 +83,18 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Set Smoke Color.
 	/// </summary>
-	public static void SetSmokeColor (RCC_CarControllerV3 vehicle, int indexOfGroundMaterial, Color color) {
+	public static void SetSmokeColor (RCC_CarMainControllerV3 vehicle, int indexOfGroundMaterial, Color color) {
 
 		if (!CheckVehicle (vehicle))
 			return;
 
-		RCC_WheelCollider[] wheels = vehicle.GetComponentsInChildren<RCC_WheelCollider> ();
+		RCC_WheelColliderController[] wheels = vehicle.GetComponentsInChildren<RCC_WheelColliderController> ();
 
-		foreach(RCC_WheelCollider wheel in wheels){
+		foreach(RCC_WheelColliderController wheel in wheels){
 
-			for (int i = 0; i < wheel.allWheelParticles.Count; i++) {
+			for (int i = 0; i < wheel.allWheelParticlesList.Count; i++) {
 
-				ParticleSystem ps = wheel.allWheelParticles[i];
+				ParticleSystem ps = wheel.allWheelParticlesList[i];
 				ParticleSystem.MainModule psmain = ps.main;
 				color.a = psmain.startColor.color.a;
 				psmain.startColor = color;
@@ -108,17 +108,17 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Set Headlights Color.
 	/// </summary>
-	public static void SetHeadlightsColor (RCC_CarControllerV3 vehicle, Color color) {
+	public static void SetHeadlightsColor (RCC_CarMainControllerV3 vehicle, Color color) {
 
 		if (!CheckVehicle (vehicle))
 			return;
 
 		vehicle.lowBeamHeadLightsOn = true;
-		RCC_Light[] lights = vehicle.GetComponentsInChildren<RCC_Light> ();
+		RCC_LightController[] lights = vehicle.GetComponentsInChildren<RCC_LightController> ();
 
-		foreach(RCC_Light l in lights){
+		foreach(RCC_LightController l in lights){
 
-			if(l.lightType == RCC_Light.LightType.HeadLight || l.lightType == RCC_Light.LightType.HighBeamHeadLight || l.lightType == RCC_Light.LightType.ParkLight)
+			if(l.lightTypeValue == RCC_LightController.LightType.HeadLight || l.lightTypeValue == RCC_LightController.LightType.HighBeamHeadLight || l.lightTypeValue == RCC_LightController.LightType.ParkLight)
 				l.GetComponent<Light>().color = color;
 
 		}
@@ -128,7 +128,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Enable / Disable Exhaust Flame Particles.
 	/// </summary>
-	public static void SetExhaustFlame (RCC_CarControllerV3 vehicle, bool state) {
+	public static void SetExhaustFlame (RCC_CarMainControllerV3 vehicle, bool state) {
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -143,17 +143,17 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Set Front Wheel Cambers.
 	/// </summary>
-	public static void SetFrontCambers(RCC_CarControllerV3 vehicle, float camberAngle){
+	public static void SetFrontCambers(RCC_CarMainControllerV3 vehicle, float camberAngle){
 
 		if (!CheckVehicle (vehicle))
 			return;
 
-		RCC_WheelCollider[] wc = vehicle.GetComponentsInChildren<RCC_WheelCollider> ();
+		RCC_WheelColliderController[] wc = vehicle.GetComponentsInChildren<RCC_WheelColliderController> ();
 
-		foreach (RCC_WheelCollider w in wc) {
+		foreach (RCC_WheelColliderController w in wc) {
 			
 			if (w == vehicle.FrontLeftWheelCollider || w == vehicle.FrontRightWheelCollider)
-				w.camber = camberAngle;
+				w.camberValue = camberAngle;
 			
 		}
 
@@ -164,17 +164,17 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Set Rear Wheel Cambers.
 	/// </summary>
-	public static void SetRearCambers(RCC_CarControllerV3 vehicle, float camberAngle){
+	public static void SetRearCambers(RCC_CarMainControllerV3 vehicle, float camberAngle){
 
 		if (!CheckVehicle (vehicle))
 			return;
 
-		RCC_WheelCollider[] wc = vehicle.GetComponentsInChildren<RCC_WheelCollider> ();
+		RCC_WheelColliderController[] wc = vehicle.GetComponentsInChildren<RCC_WheelColliderController> ();
 
-		foreach (RCC_WheelCollider w in wc) {
+		foreach (RCC_WheelColliderController w in wc) {
 			
 			if (w != vehicle.FrontLeftWheelCollider && w != vehicle.FrontRightWheelCollider)
-				w.camber = camberAngle;
+				w.camberValue = camberAngle;
 			
 		}
 
@@ -185,26 +185,26 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Change Wheel Models. You can find your wheel models array in Tools --> BCG --> RCC --> Configure Changable Wheels.
 	/// </summary>
-	public static void ChangeWheels(RCC_CarControllerV3 vehicle, GameObject wheel, bool applyRadius){
+	public static void ChangeWheels(RCC_CarMainControllerV3 vehicle, GameObject wheel, bool applyRadius){
 
 		if (!CheckVehicle (vehicle))
 			return;
 
 		for (int i = 0; i < vehicle.allWheelColliders.Length; i++) {
 
-			if (vehicle.allWheelColliders [i].wheelModel.GetComponent<MeshRenderer> ()) 
-				vehicle.allWheelColliders [i].wheelModel.GetComponent<MeshRenderer> ().enabled = false;
+			if (vehicle.allWheelColliders [i].wheelModelTransform.GetComponent<MeshRenderer> ()) 
+				vehicle.allWheelColliders [i].wheelModelTransform.GetComponent<MeshRenderer> ().enabled = false;
 
-			foreach (Transform t in vehicle.allWheelColliders [i].wheelModel.GetComponentInChildren<Transform> ())
+			foreach (Transform t in vehicle.allWheelColliders [i].wheelModelTransform.GetComponentInChildren<Transform> ())
 				t.gameObject.SetActive (false);
 
-			GameObject newWheel = (GameObject)Instantiate (wheel, vehicle.allWheelColliders[i].wheelModel.position, vehicle.allWheelColliders[i].wheelModel.rotation, vehicle.allWheelColliders[i].wheelModel);
+			GameObject newWheel = (GameObject)Instantiate (wheel, vehicle.allWheelColliders[i].wheelModelTransform.position, vehicle.allWheelColliders[i].wheelModelTransform.rotation, vehicle.allWheelColliders[i].wheelModelTransform);
 
-			if (vehicle.allWheelColliders [i].wheelModel.localPosition.x > 0f)
+			if (vehicle.allWheelColliders [i].wheelModelTransform.localPosition.x > 0f)
 				newWheel.transform.localScale = new Vector3 (newWheel.transform.localScale.x * -1f, newWheel.transform.localScale.y, newWheel.transform.localScale.z);
 
 			if (applyRadius)
-				vehicle.allWheelColliders [i].wheelCollider.radius = RCC_GetBounds.MaxBoundsExtent (wheel.transform);
+				vehicle.allWheelColliders [i].wheelColliderObject.radius = RCC_GetBoundsSize.MaxBoundsExtentValue (wheel.transform);
 
 		}
 
@@ -215,22 +215,22 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Set Front Suspension targetPositions. It changes targetPosition of the front WheelColliders.
 	/// </summary>
-	public static void SetFrontSuspensionsTargetPos(RCC_CarControllerV3 vehicle, float targetPosition){
+	public static void SetFrontSuspensionsTargetPos(RCC_CarMainControllerV3 vehicle, float targetPosition){
 
 		if (!CheckVehicle (vehicle))
 			return;
 
 		targetPosition = Mathf.Clamp01(targetPosition);
 
-		JointSpring spring1 = vehicle.FrontLeftWheelCollider.wheelCollider.suspensionSpring;
+		JointSpring spring1 = vehicle.FrontLeftWheelCollider.wheelColliderObject.suspensionSpring;
 		spring1.targetPosition = 1f - targetPosition;
 
-		vehicle.FrontLeftWheelCollider.wheelCollider.suspensionSpring = spring1;
+		vehicle.FrontLeftWheelCollider.wheelColliderObject.suspensionSpring = spring1;
 
-		JointSpring spring2 = vehicle.FrontRightWheelCollider.wheelCollider.suspensionSpring;
+		JointSpring spring2 = vehicle.FrontRightWheelCollider.wheelColliderObject.suspensionSpring;
 		spring2.targetPosition = 1f - targetPosition;
 
-		vehicle.FrontRightWheelCollider.wheelCollider.suspensionSpring = spring2;
+		vehicle.FrontRightWheelCollider.wheelColliderObject.suspensionSpring = spring2;
 
 		OverrideRCC (vehicle);
 
@@ -239,22 +239,22 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Set Rear Suspension targetPositions. It changes targetPosition of the rear WheelColliders.
 	/// </summary>
-	public static void SetRearSuspensionsTargetPos(RCC_CarControllerV3 vehicle, float targetPosition){
+	public static void SetRearSuspensionsTargetPos(RCC_CarMainControllerV3 vehicle, float targetPosition){
 
 		if (!CheckVehicle (vehicle))
 			return;
 
 		targetPosition = Mathf.Clamp01(targetPosition);
 
-		JointSpring spring1 = vehicle.RearLeftWheelCollider.wheelCollider.suspensionSpring;
+		JointSpring spring1 = vehicle.RearLeftWheelCollider.wheelColliderObject.suspensionSpring;
 		spring1.targetPosition = 1f - targetPosition;
 
-		vehicle.RearLeftWheelCollider.wheelCollider.suspensionSpring = spring1;
+		vehicle.RearLeftWheelCollider.wheelColliderObject.suspensionSpring = spring1;
 
-		JointSpring spring2 = vehicle.RearRightWheelCollider.wheelCollider.suspensionSpring;
+		JointSpring spring2 = vehicle.RearRightWheelCollider.wheelColliderObject.suspensionSpring;
 		spring2.targetPosition = 1f - targetPosition;
 
-		vehicle.RearRightWheelCollider.wheelCollider.suspensionSpring = spring2;
+		vehicle.RearRightWheelCollider.wheelColliderObject.suspensionSpring = spring2;
 
 		OverrideRCC (vehicle);
 
@@ -263,32 +263,32 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Set All Suspension targetPositions. It changes targetPosition of the all WheelColliders.
 	/// </summary>
-	public static void SetAllSuspensionsTargetPos(RCC_CarControllerV3 vehicle, float targetPosition){
+	public static void SetAllSuspensionsTargetPos(RCC_CarMainControllerV3 vehicle, float targetPosition){
 
 		if (!CheckVehicle (vehicle))
 			return;
 
 		targetPosition = Mathf.Clamp01(targetPosition);
 
-		JointSpring spring1 = vehicle.RearLeftWheelCollider.wheelCollider.suspensionSpring;
+		JointSpring spring1 = vehicle.RearLeftWheelCollider.wheelColliderObject.suspensionSpring;
 		spring1.targetPosition = 1f - targetPosition;
 
-		vehicle.RearLeftWheelCollider.wheelCollider.suspensionSpring = spring1;
+		vehicle.RearLeftWheelCollider.wheelColliderObject.suspensionSpring = spring1;
 
-		JointSpring spring2 = vehicle.RearRightWheelCollider.wheelCollider.suspensionSpring;
+		JointSpring spring2 = vehicle.RearRightWheelCollider.wheelColliderObject.suspensionSpring;
 		spring2.targetPosition = 1f - targetPosition;
 
-		vehicle.RearRightWheelCollider.wheelCollider.suspensionSpring = spring2;
+		vehicle.RearRightWheelCollider.wheelColliderObject.suspensionSpring = spring2;
 
-		JointSpring spring3 = vehicle.FrontLeftWheelCollider.wheelCollider.suspensionSpring;
+		JointSpring spring3 = vehicle.FrontLeftWheelCollider.wheelColliderObject.suspensionSpring;
 		spring3.targetPosition = 1f - targetPosition;
 
-		vehicle.FrontLeftWheelCollider.wheelCollider.suspensionSpring = spring3;
+		vehicle.FrontLeftWheelCollider.wheelColliderObject.suspensionSpring = spring3;
 
-		JointSpring spring4 = vehicle.FrontRightWheelCollider.wheelCollider.suspensionSpring;
+		JointSpring spring4 = vehicle.FrontRightWheelCollider.wheelColliderObject.suspensionSpring;
 		spring4.targetPosition = 1f - targetPosition;
 
-		vehicle.FrontRightWheelCollider.wheelCollider.suspensionSpring = spring4;
+		vehicle.FrontRightWheelCollider.wheelColliderObject.suspensionSpring = spring4;
 
 		OverrideRCC (vehicle);
 
@@ -297,7 +297,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Set Front Suspension Distances.
 	/// </summary>
-	public static void SetFrontSuspensionsDistances(RCC_CarControllerV3 vehicle, float distance){
+	public static void SetFrontSuspensionsDistances(RCC_CarMainControllerV3 vehicle, float distance){
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -305,8 +305,8 @@ public class RCC_Customization : MonoBehaviour {
 		if (distance <= 0)
 			distance = .05f;
 
-		vehicle.FrontLeftWheelCollider.wheelCollider.suspensionDistance = distance;
-		vehicle.FrontRightWheelCollider.wheelCollider.suspensionDistance = distance;
+		vehicle.FrontLeftWheelCollider.wheelColliderObject.suspensionDistance = distance;
+		vehicle.FrontRightWheelCollider.wheelColliderObject.suspensionDistance = distance;
 
 		OverrideRCC (vehicle);
 
@@ -315,7 +315,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Set Rear Suspension Distances.
 	/// </summary>
-	public static void SetRearSuspensionsDistances(RCC_CarControllerV3 vehicle, float distance){
+	public static void SetRearSuspensionsDistances(RCC_CarMainControllerV3 vehicle, float distance){
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -323,13 +323,13 @@ public class RCC_Customization : MonoBehaviour {
 		if (distance <= 0)
 			distance = .05f;
 
-		vehicle.RearLeftWheelCollider.wheelCollider.suspensionDistance = distance;
-		vehicle.RearRightWheelCollider.wheelCollider.suspensionDistance = distance;
+		vehicle.RearLeftWheelCollider.wheelColliderObject.suspensionDistance = distance;
+		vehicle.RearRightWheelCollider.wheelColliderObject.suspensionDistance = distance;
 
 		if (vehicle.ExtraRearWheelsCollider != null && vehicle.ExtraRearWheelsCollider.Length > 0) {
 			
-			foreach (RCC_WheelCollider wc in vehicle.ExtraRearWheelsCollider)
-				wc.wheelCollider.suspensionDistance = distance;
+			foreach (RCC_WheelColliderController wc in vehicle.ExtraRearWheelsCollider)
+				wc.wheelColliderObject.suspensionDistance = distance;
 			
 		}
 
@@ -340,7 +340,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Set Drivetrain Mode.
 	/// </summary>
-	public static void SetDrivetrainMode(RCC_CarControllerV3 vehicle, RCC_CarControllerV3.WheelType mode){
+	public static void SetDrivetrainMode(RCC_CarMainControllerV3 vehicle, RCC_CarMainControllerV3.WheelType mode){
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -354,7 +354,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Set Gear Shifting Threshold. Automatic gear will shift up at earlier rpm on lower values. Automatic gear will shift up at later rpm on higher values. 
 	/// </summary>
-	public static void SetGearShiftingThreshold(RCC_CarControllerV3 vehicle, float targetValue){
+	public static void SetGearShiftingThreshold(RCC_CarMainControllerV3 vehicle, float targetValue){
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -368,7 +368,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Set Clutch Threshold. Automatic gear will shift up at earlier rpm on lower values. Automatic gear will shift up at later rpm on higher values. 
 	/// </summary>
-	public static void SetClutchThreshold(RCC_CarControllerV3 vehicle, float targetValue){
+	public static void SetClutchThreshold(RCC_CarMainControllerV3 vehicle, float targetValue){
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -382,7 +382,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Enable / Disable Counter Steering while vehicle is drifting. Useful for avoid spinning.
 	/// </summary>
-	public static void SetCounterSteering(RCC_CarControllerV3 vehicle, bool state){
+	public static void SetCounterSteering(RCC_CarMainControllerV3 vehicle, bool state){
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -396,7 +396,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Enable / Disable NOS.
 	/// </summary>
-	public static void SetNOS(RCC_CarControllerV3 vehicle, bool state){
+	public static void SetNOS(RCC_CarMainControllerV3 vehicle, bool state){
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -410,7 +410,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Enable / Disable Turbo.
 	/// </summary>
-	public static void SetTurbo(RCC_CarControllerV3 vehicle, bool state){
+	public static void SetTurbo(RCC_CarMainControllerV3 vehicle, bool state){
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -424,7 +424,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Enable / Disable Exhaust Flames.
 	/// </summary>
-	public static void SetUseExhaustFlame(RCC_CarControllerV3 vehicle, bool state){
+	public static void SetUseExhaustFlame(RCC_CarMainControllerV3 vehicle, bool state){
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -438,7 +438,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Enable / Disable Rev Limiter.
 	/// </summary>
-	public static void SetRevLimiter(RCC_CarControllerV3 vehicle, bool state){
+	public static void SetRevLimiter(RCC_CarMainControllerV3 vehicle, bool state){
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -452,7 +452,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Set Front Suspension Spring Force.
 	/// </summary>
-	public static void SetFrontSuspensionsSpringForce(RCC_CarControllerV3 vehicle, float targetValue){
+	public static void SetFrontSuspensionsSpringForce(RCC_CarMainControllerV3 vehicle, float targetValue){
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -469,7 +469,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Set Rear Suspension Spring Force.
 	/// </summary>
-	public static void SetRearSuspensionsSpringForce(RCC_CarControllerV3 vehicle, float targetValue){
+	public static void SetRearSuspensionsSpringForce(RCC_CarMainControllerV3 vehicle, float targetValue){
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -486,7 +486,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Set Front Suspension Spring Damper.
 	/// </summary>
-	public static void SetFrontSuspensionsSpringDamper(RCC_CarControllerV3 vehicle, float targetValue){
+	public static void SetFrontSuspensionsSpringDamper(RCC_CarMainControllerV3 vehicle, float targetValue){
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -503,7 +503,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Set Rear Suspension Spring Damper.
 	/// </summary>
-	public static void SetRearSuspensionsSpringDamper(RCC_CarControllerV3 vehicle, float targetValue){
+	public static void SetRearSuspensionsSpringDamper(RCC_CarMainControllerV3 vehicle, float targetValue){
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -520,7 +520,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Set Maximum Speed of the vehicle.
 	/// </summary>
-	public static void SetMaximumSpeed(RCC_CarControllerV3 vehicle, float targetValue){
+	public static void SetMaximumSpeed(RCC_CarMainControllerV3 vehicle, float targetValue){
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -534,7 +534,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Set Maximum Engine Torque of the vehicle.
 	/// </summary>
-	public static void SetMaximumTorque(RCC_CarControllerV3 vehicle, float targetValue){
+	public static void SetMaximumTorque(RCC_CarMainControllerV3 vehicle, float targetValue){
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -548,7 +548,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Set Maximum Brake of the vehicle.
 	/// </summary>
-	public static void SetMaximumBrake(RCC_CarControllerV3 vehicle, float targetValue){
+	public static void SetMaximumBrake(RCC_CarMainControllerV3 vehicle, float targetValue){
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -562,7 +562,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Repair vehicle.
 	/// </summary>
-	public static void Repair(RCC_CarControllerV3 vehicle){
+	public static void Repair(RCC_CarMainControllerV3 vehicle){
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -574,7 +574,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Enable / Disable ESP.
 	/// </summary>
-	public static void SetESP(RCC_CarControllerV3 vehicle, bool state){
+	public static void SetESP(RCC_CarMainControllerV3 vehicle, bool state){
 		
 		if (!CheckVehicle (vehicle))
 			return;
@@ -586,7 +586,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Enable / Disable ABS.
 	/// </summary>
-	public static void SetABS(RCC_CarControllerV3 vehicle, bool state){
+	public static void SetABS(RCC_CarMainControllerV3 vehicle, bool state){
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -598,7 +598,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Enable / Disable TCS.
 	/// </summary>
-	public static void SetTCS(RCC_CarControllerV3 vehicle, bool state){
+	public static void SetTCS(RCC_CarMainControllerV3 vehicle, bool state){
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -610,7 +610,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Enable / Disable Steering Helper.
 	/// </summary>
-	public static void SetSH(RCC_CarControllerV3 vehicle, bool state){
+	public static void SetSH(RCC_CarMainControllerV3 vehicle, bool state){
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -622,7 +622,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Set Steering Helper strength.
 	/// </summary>
-	public static void SetSHStrength(RCC_CarControllerV3 vehicle, float value){
+	public static void SetSHStrength(RCC_CarMainControllerV3 vehicle, float value){
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -638,29 +638,29 @@ public class RCC_Customization : MonoBehaviour {
 	/// </summary>
 	public static void SetTransmission(bool automatic){
 
-		RCC_Settings.Instance.useAutomaticGear = automatic;
+		RCC_SettingsData.InstanceR.useAutomaticGearFlag = automatic;
 
 	}
 
 	/// <summary>
 	/// Save all stats with PlayerPrefs.
 	/// </summary>
-	public static void SaveStats(RCC_CarControllerV3 vehicle){
+	public static void SaveStats(RCC_CarMainControllerV3 vehicle){
 
 		if (!CheckVehicle (vehicle))
 			return;
 
-		PlayerPrefs.SetFloat(vehicle.transform.name + "_FrontCamber", vehicle.FrontLeftWheelCollider.camber);
-		PlayerPrefs.SetFloat(vehicle.transform.name + "_RearCamber", vehicle.RearLeftWheelCollider.camber);
+		PlayerPrefs.SetFloat(vehicle.transform.name + "_FrontCamber", vehicle.FrontLeftWheelCollider.camberValue);
+		PlayerPrefs.SetFloat(vehicle.transform.name + "_RearCamber", vehicle.RearLeftWheelCollider.camberValue);
 
-		PlayerPrefs.SetFloat(vehicle.transform.name + "_FrontSuspensionsDistance", vehicle.FrontLeftWheelCollider.wheelCollider.suspensionDistance);
-		PlayerPrefs.SetFloat(vehicle.transform.name + "_RearSuspensionsDistance", vehicle.RearLeftWheelCollider.wheelCollider.suspensionDistance);
+		PlayerPrefs.SetFloat(vehicle.transform.name + "_FrontSuspensionsDistance", vehicle.FrontLeftWheelCollider.wheelColliderObject.suspensionDistance);
+		PlayerPrefs.SetFloat(vehicle.transform.name + "_RearSuspensionsDistance", vehicle.RearLeftWheelCollider.wheelColliderObject.suspensionDistance);
 
-		PlayerPrefs.SetFloat(vehicle.transform.name + "_FrontSuspensionsSpring", vehicle.FrontLeftWheelCollider.wheelCollider.suspensionSpring.spring);
-		PlayerPrefs.SetFloat(vehicle.transform.name + "_RearSuspensionsSpring", vehicle.RearLeftWheelCollider.wheelCollider.suspensionSpring.spring);
+		PlayerPrefs.SetFloat(vehicle.transform.name + "_FrontSuspensionsSpring", vehicle.FrontLeftWheelCollider.wheelColliderObject.suspensionSpring.spring);
+		PlayerPrefs.SetFloat(vehicle.transform.name + "_RearSuspensionsSpring", vehicle.RearLeftWheelCollider.wheelColliderObject.suspensionSpring.spring);
 
-		PlayerPrefs.SetFloat(vehicle.transform.name + "_FrontSuspensionsDamper", vehicle.FrontLeftWheelCollider.wheelCollider.suspensionSpring.damper);
-		PlayerPrefs.SetFloat(vehicle.transform.name + "_RearSuspensionsDamper", vehicle.RearLeftWheelCollider.wheelCollider.suspensionSpring.damper);
+		PlayerPrefs.SetFloat(vehicle.transform.name + "_FrontSuspensionsDamper", vehicle.FrontLeftWheelCollider.wheelColliderObject.suspensionSpring.damper);
+		PlayerPrefs.SetFloat(vehicle.transform.name + "_RearSuspensionsDamper", vehicle.RearLeftWheelCollider.wheelColliderObject.suspensionSpring.damper);
 
 		PlayerPrefs.SetFloat(vehicle.transform.name + "_MaximumSpeed", vehicle.maxspeed);
 		PlayerPrefs.SetFloat(vehicle.transform.name + "_MaximumBrake", vehicle.brakeTorque);
@@ -673,9 +673,9 @@ public class RCC_Customization : MonoBehaviour {
 
 		RCC_PlayerPrefsX.SetBool(vehicle.transform.name + "_CounterSteering", vehicle.useCounterSteering);
 
-		foreach(RCC_Light _light in vehicle.GetComponentsInChildren<RCC_Light>()){
+		foreach(RCC_LightController _light in vehicle.GetComponentsInChildren<RCC_LightController>()){
 			
-			if (_light.lightType == RCC_Light.LightType.HeadLight) {
+			if (_light.lightTypeValue == RCC_LightController.LightType.HeadLight) {
 				
 				RCC_PlayerPrefsX.SetColor(vehicle.transform.name + "_HeadlightsColor", _light.GetComponentInChildren<Light>().color);
 				break;
@@ -684,7 +684,7 @@ public class RCC_Customization : MonoBehaviour {
 
 		}
 
-		ParticleSystem ps = vehicle.RearLeftWheelCollider.allWheelParticles[0];
+		ParticleSystem ps = vehicle.RearLeftWheelCollider.allWheelParticlesList[0];
 		ParticleSystem.MainModule psmain = ps.main;
 
 		RCC_PlayerPrefsX.SetColor(vehicle.transform.name + "_WheelsSmokeColor", psmain.startColor.color);
@@ -704,22 +704,22 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Load all stats with PlayerPrefs.
 	/// </summary>
-	public static void LoadStats(RCC_CarControllerV3 vehicle){
+	public static void LoadStats(RCC_CarMainControllerV3 vehicle){
 
 		if (!CheckVehicle (vehicle))
 			return;
 
-		SetFrontCambers (vehicle, PlayerPrefs.GetFloat(vehicle.transform.name + "_FrontCamber", vehicle.FrontLeftWheelCollider.camber));
-		SetRearCambers (vehicle, PlayerPrefs.GetFloat(vehicle.transform.name + "_RearCamber", vehicle.RearLeftWheelCollider.camber));
+		SetFrontCambers (vehicle, PlayerPrefs.GetFloat(vehicle.transform.name + "_FrontCamber", vehicle.FrontLeftWheelCollider.camberValue));
+		SetRearCambers (vehicle, PlayerPrefs.GetFloat(vehicle.transform.name + "_RearCamber", vehicle.RearLeftWheelCollider.camberValue));
 
-		SetFrontSuspensionsDistances (vehicle, PlayerPrefs.GetFloat(vehicle.transform.name + "_FrontSuspensionsDistance", vehicle.FrontLeftWheelCollider.wheelCollider.suspensionDistance));
-		SetRearSuspensionsDistances (vehicle, PlayerPrefs.GetFloat(vehicle.transform.name + "_RearSuspensionsDistance", vehicle.RearLeftWheelCollider.wheelCollider.suspensionDistance));
+		SetFrontSuspensionsDistances (vehicle, PlayerPrefs.GetFloat(vehicle.transform.name + "_FrontSuspensionsDistance", vehicle.FrontLeftWheelCollider.wheelColliderObject.suspensionDistance));
+		SetRearSuspensionsDistances (vehicle, PlayerPrefs.GetFloat(vehicle.transform.name + "_RearSuspensionsDistance", vehicle.RearLeftWheelCollider.wheelColliderObject.suspensionDistance));
 
-		SetFrontSuspensionsSpringForce (vehicle, PlayerPrefs.GetFloat(vehicle.transform.name + "_FrontSuspensionsSpring", vehicle.FrontLeftWheelCollider.wheelCollider.suspensionSpring.spring));
-		SetRearSuspensionsSpringForce (vehicle, PlayerPrefs.GetFloat(vehicle.transform.name + "_RearSuspensionsSpring", vehicle.RearLeftWheelCollider.wheelCollider.suspensionSpring.spring));
+		SetFrontSuspensionsSpringForce (vehicle, PlayerPrefs.GetFloat(vehicle.transform.name + "_FrontSuspensionsSpring", vehicle.FrontLeftWheelCollider.wheelColliderObject.suspensionSpring.spring));
+		SetRearSuspensionsSpringForce (vehicle, PlayerPrefs.GetFloat(vehicle.transform.name + "_RearSuspensionsSpring", vehicle.RearLeftWheelCollider.wheelColliderObject.suspensionSpring.spring));
 
-		SetFrontSuspensionsSpringDamper (vehicle, PlayerPrefs.GetFloat(vehicle.transform.name + "_FrontSuspensionsDamper", vehicle.FrontLeftWheelCollider.wheelCollider.suspensionSpring.damper));
-		SetRearSuspensionsSpringDamper (vehicle, PlayerPrefs.GetFloat(vehicle.transform.name + "_RearSuspensionsDamper", vehicle.RearLeftWheelCollider.wheelCollider.suspensionSpring.damper));
+		SetFrontSuspensionsSpringDamper (vehicle, PlayerPrefs.GetFloat(vehicle.transform.name + "_FrontSuspensionsDamper", vehicle.FrontLeftWheelCollider.wheelColliderObject.suspensionSpring.damper));
+		SetRearSuspensionsSpringDamper (vehicle, PlayerPrefs.GetFloat(vehicle.transform.name + "_RearSuspensionsDamper", vehicle.RearLeftWheelCollider.wheelColliderObject.suspensionSpring.damper));
 
 		SetMaximumSpeed (vehicle, PlayerPrefs.GetFloat(vehicle.transform.name + "_MaximumSpeed", vehicle.maxspeed));
 		SetMaximumBrake (vehicle, PlayerPrefs.GetFloat(vehicle.transform.name + "_MaximumBrake", vehicle.brakeTorque));
@@ -730,15 +730,15 @@ public class RCC_Customization : MonoBehaviour {
 		switch (drvtrn) {
 
 		case "FWD":
-			vehicle.wheelTypeChoise = RCC_CarControllerV3.WheelType.FWD;
+			vehicle.wheelTypeChoise = RCC_CarMainControllerV3.WheelType.FWD;
 			break;
 
 		case "RWD":
-			vehicle.wheelTypeChoise = RCC_CarControllerV3.WheelType.RWD;
+			vehicle.wheelTypeChoise = RCC_CarMainControllerV3.WheelType.RWD;
 			break;
 
 		case "AWD":
-			vehicle.wheelTypeChoise = RCC_CarControllerV3.WheelType.AWD;
+			vehicle.wheelTypeChoise = RCC_CarMainControllerV3.WheelType.AWD;
 			break;
 
 		}
@@ -771,7 +771,7 @@ public class RCC_Customization : MonoBehaviour {
 	/// <summary>
 	/// Resets all stats and saves default values with PlayerPrefs.
 	/// </summary>
-	public static void ResetStats(RCC_CarControllerV3 vehicle, RCC_CarControllerV3 defaultCar){
+	public static void ResetStats(RCC_CarMainControllerV3 vehicle, RCC_CarMainControllerV3 defaultCar){
 
 		if (!CheckVehicle (vehicle))
 			return;
@@ -779,17 +779,17 @@ public class RCC_Customization : MonoBehaviour {
 		if (!CheckVehicle (defaultCar))
 			return;
 
-		SetFrontCambers (vehicle, defaultCar.FrontLeftWheelCollider.camber);
-		SetRearCambers (vehicle, defaultCar.RearLeftWheelCollider.camber);
+		SetFrontCambers (vehicle, defaultCar.FrontLeftWheelCollider.camberValue);
+		SetRearCambers (vehicle, defaultCar.RearLeftWheelCollider.camberValue);
 
-		SetFrontSuspensionsDistances (vehicle, defaultCar.FrontLeftWheelCollider.wheelCollider.suspensionDistance);
-		SetRearSuspensionsDistances (vehicle, defaultCar.RearLeftWheelCollider.wheelCollider.suspensionDistance);
+		SetFrontSuspensionsDistances (vehicle, defaultCar.FrontLeftWheelCollider.wheelColliderObject.suspensionDistance);
+		SetRearSuspensionsDistances (vehicle, defaultCar.RearLeftWheelCollider.wheelColliderObject.suspensionDistance);
 
-		SetFrontSuspensionsSpringForce (vehicle, defaultCar.FrontLeftWheelCollider.wheelCollider.suspensionSpring.spring);
-		SetRearSuspensionsSpringForce (vehicle, defaultCar.RearLeftWheelCollider.wheelCollider.suspensionSpring.spring);
+		SetFrontSuspensionsSpringForce (vehicle, defaultCar.FrontLeftWheelCollider.wheelColliderObject.suspensionSpring.spring);
+		SetRearSuspensionsSpringForce (vehicle, defaultCar.RearLeftWheelCollider.wheelColliderObject.suspensionSpring.spring);
 
-		SetFrontSuspensionsSpringDamper (vehicle, defaultCar.FrontLeftWheelCollider.wheelCollider.suspensionSpring.damper);
-		SetRearSuspensionsSpringDamper (vehicle, defaultCar.RearLeftWheelCollider.wheelCollider.suspensionSpring.damper);
+		SetFrontSuspensionsSpringDamper (vehicle, defaultCar.FrontLeftWheelCollider.wheelColliderObject.suspensionSpring.damper);
+		SetRearSuspensionsSpringDamper (vehicle, defaultCar.RearLeftWheelCollider.wheelColliderObject.suspensionSpring.damper);
 
 		SetMaximumSpeed (vehicle, defaultCar.maxspeed);
 		SetMaximumBrake (vehicle, defaultCar.brakeTorque);
@@ -800,15 +800,15 @@ public class RCC_Customization : MonoBehaviour {
 		switch (drvtrn) {
 
 		case "FWD":
-			vehicle.wheelTypeChoise = RCC_CarControllerV3.WheelType.FWD;
+			vehicle.wheelTypeChoise = RCC_CarMainControllerV3.WheelType.FWD;
 			break;
 
 		case "RWD":
-			vehicle.wheelTypeChoise = RCC_CarControllerV3.WheelType.RWD;
+			vehicle.wheelTypeChoise = RCC_CarMainControllerV3.WheelType.RWD;
 			break;
 
 		case "AWD":
-			vehicle.wheelTypeChoise = RCC_CarControllerV3.WheelType.AWD;
+			vehicle.wheelTypeChoise = RCC_CarMainControllerV3.WheelType.AWD;
 			break;
 
 		}
@@ -837,7 +837,7 @@ public class RCC_Customization : MonoBehaviour {
 
 	}
 
-	public static bool CheckVehicle(RCC_CarControllerV3 vehicle){
+	public static bool CheckVehicle(RCC_CarMainControllerV3 vehicle){
 
 		if (!vehicle) {
 

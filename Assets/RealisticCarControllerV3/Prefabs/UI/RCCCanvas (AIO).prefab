@@ -454,7 +454,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114935477126946956}
-        m_MethodName: LoadLevel
+        m_MethodName: LoadLevelAsync
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -465,7 +465,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 114935477126946956}
-        m_MethodName: ToggleMenu
+        m_MethodName: ToggleMenuObject
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 1372526909583612}
@@ -686,7 +686,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114935477126946956}
-        m_MethodName: LoadLevel
+        m_MethodName: LoadLevelAsync
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -697,7 +697,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 114935477126946956}
-        m_MethodName: ToggleMenu
+        m_MethodName: ToggleMenuObject
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 1372526909583612}
@@ -1134,7 +1134,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114935477126946956}
-        m_MethodName: LoadLevel
+        m_MethodName: LoadLevelAsync
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1145,7 +1145,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 114935477126946956}
-        m_MethodName: ToggleMenu
+        m_MethodName: ToggleMenuObject
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 1372526909583612}
@@ -1412,7 +1412,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114935477126946956}
-        m_MethodName: LoadLevel
+        m_MethodName: LoadLevelAsync
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1423,7 +1423,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 114935477126946956}
-        m_MethodName: ToggleMenu
+        m_MethodName: ToggleMenuObject
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 1127526316572714}
@@ -1734,7 +1734,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114935477126946956}
-        m_MethodName: LoadLevel
+        m_MethodName: LoadLevelAsync
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1745,7 +1745,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 114935477126946956}
-        m_MethodName: ToggleMenu
+        m_MethodName: ToggleMenuObject
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 1372526909583612}
@@ -2045,7 +2045,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114935477126946956}
-        m_MethodName: LoadLevel
+        m_MethodName: LoadLevelAsync
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2056,7 +2056,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 114935477126946956}
-        m_MethodName: ToggleMenu
+        m_MethodName: ToggleMenuObject
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 1372526909583612}
@@ -2203,7 +2203,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114935477126946956}
-        m_MethodName: Quit
+        m_MethodName: QuitApplication
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2576,7 +2576,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114935477126946956}
-        m_MethodName: LoadLevel
+        m_MethodName: LoadLevelAsync
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2587,7 +2587,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 114935477126946956}
-        m_MethodName: ToggleMenu
+        m_MethodName: ToggleMenuObject
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 1372526909583612}
@@ -2929,7 +2929,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114935477126946956}
-        m_MethodName: LoadLevel
+        m_MethodName: LoadLevelAsync
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2940,7 +2940,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 114935477126946956}
-        m_MethodName: ToggleMenu
+        m_MethodName: ToggleMenuObject
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 1372526909583612}

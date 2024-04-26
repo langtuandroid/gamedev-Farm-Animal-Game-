@@ -20,11 +20,11 @@ public class RCC_DashboardInputs : MonoBehaviour {
 	// Getting an Instance of Main Shared RCC Settings.
 	#region RCC Settings Instance
 
-	private RCC_Settings RCCSettingsInstance;
-	private RCC_Settings RCCSettings {
+	private RCC_SettingsData RCCSettingsInstance;
+	private RCC_SettingsData RCCSettings {
 		get {
 			if (RCCSettingsInstance == null) {
-				RCCSettingsInstance = RCC_Settings.Instance;
+				RCCSettingsInstance = RCC_SettingsData.InstanceR;
 				return RCCSettingsInstance;
 			}
 			return RCCSettingsInstance;
@@ -63,7 +63,7 @@ public class RCC_DashboardInputs : MonoBehaviour {
 	internal bool Park = false;
 	internal bool Headlights = false;
 
-	internal RCC_CarControllerV3.IndicatorsOn indicators;
+	internal RCC_CarMainControllerV3.IndicatorsOn indicators;
 
 	void Update(){
 
@@ -165,7 +165,7 @@ public class RCC_DashboardInputs : MonoBehaviour {
 
 		if(KMHNeedle){
 			
-			if(RCCSettings.units == RCC_Settings.Units.KMH)
+			if(RCCSettings.unitsR == RCC_SettingsData.Units.KMH)
 				KMHNeedleRotation = (RCC_SceneManager.Instance.activePlayerVehicle.speed);
 			else
 				KMHNeedleRotation = (RCC_SceneManager.Instance.activePlayerVehicle.speed * 0.62f);

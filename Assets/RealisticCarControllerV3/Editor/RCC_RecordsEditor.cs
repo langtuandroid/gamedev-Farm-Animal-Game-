@@ -13,10 +13,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-[CustomEditor(typeof(RCC_Records))]
+[CustomEditor(typeof(RCC_RecordsData))]
 public class RCC_RecordsEditor : Editor {
 
-	RCC_Records prop;
+	RCC_RecordsData prop;
 
 	Color originalGUIColor;
 
@@ -24,7 +24,7 @@ public class RCC_RecordsEditor : Editor {
 
 		originalGUIColor = GUI.color;
 		serializedObject.Update();
-		prop = (RCC_Records)target;
+		prop = (RCC_RecordsData)target;
 
 		EditorGUILayout.Space();
 		EditorGUILayout.LabelField("RCC Records Editor Window", EditorStyles.boldLabel);
@@ -46,16 +46,16 @@ public class RCC_RecordsEditor : Editor {
 
 		EditorGUI.indentLevel++;
 
-		for (int i = 0; i < prop.records.Count; i++) {
+		for (int i = 0; i < prop.recordsList.Count; i++) {
 
 			EditorGUILayout.BeginHorizontal (GUI.skin.box);
 
-			EditorGUILayout.LabelField (prop.records[i].recordName);
+			EditorGUILayout.LabelField (prop.recordsList[i].recordNameValue);
 
 			GUI.color = Color.red;
 
 			if (GUILayout.Button ("X", GUILayout.Width(25f)))
-				DeleteRecord (prop.records[i]);
+				DeleteRecord (prop.recordsList[i]);
 
 			GUI.color = originalGUIColor;
 
@@ -89,15 +89,15 @@ public class RCC_RecordsEditor : Editor {
 
 	}
 
-	void DeleteRecord (RCC_Recorder.Recorded record){
+	void DeleteRecord (RCC_RecorderController.RecordedData record){
 
-		prop.records.Remove (record);
+		prop.recordsList.Remove (record);
 
 	}
 
 	void DeleteAllRecords (){
 
-		prop.records.Clear ();
+		prop.recordsList.Clear ();
 
 	}
 

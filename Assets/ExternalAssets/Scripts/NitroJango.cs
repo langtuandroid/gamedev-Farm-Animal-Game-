@@ -32,7 +32,7 @@ public class NitroJango : MonoBehaviour
     {
         nitroAudioSource.clip = nitroSound;
         rigid = GetComponent<Rigidbody>();
-        topspeedCache = GetComponent<RCC_CarControllerV3>().maxspeed;
+        topspeedCache = GetComponent<RCC_CarMainControllerV3>().maxspeed;
         if (nitroGroup)
         {
             nitroGroup.SetActive(true);
@@ -61,11 +61,11 @@ public class NitroJango : MonoBehaviour
 
     void Nitro()
     {
-        if (usingNitro && nitroCapacity > 0f && GetComponent<RCC_CarControllerV3>().speed > 0)
+        if (usingNitro && nitroCapacity > 0f && GetComponent<RCC_CarMainControllerV3>().speed > 0)
         {
 
             //increase top speed
-            GetComponent<RCC_CarControllerV3>().maxspeed = nitroTopSpeed;
+            GetComponent<RCC_CarMainControllerV3>().maxspeed = nitroTopSpeed;
 
             //deplete nitro
             nitroCapacity = Mathf.MoveTowards(nitroCapacity, 0, nitroDepletionRate * Time.deltaTime);
@@ -107,7 +107,7 @@ public class NitroJango : MonoBehaviour
             }
 
             //reset top speed
-            GetComponent<RCC_CarControllerV3>().maxspeed = topspeedCache;
+            GetComponent<RCC_CarMainControllerV3>().maxspeed = topspeedCache;
 
             //recharge nitro
             if (!usingNitro && nitroRegenerationRate > 0)

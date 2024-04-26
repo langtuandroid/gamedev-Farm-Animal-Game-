@@ -15,26 +15,26 @@ using System.Collections.Generic;
 
 public class RCC_EditorWindows : Editor {
 
-	private static RCC_CarControllerV3 SelectedCar(){
+	private static RCC_CarMainControllerV3 SelectedCar(){
 
 		if (Selection.activeGameObject == null)
 			return null;
 
-		return Selection.activeGameObject.GetComponentInParent<RCC_CarControllerV3> ();
+		return Selection.activeGameObject.GetComponentInParent<RCC_CarMainControllerV3> ();
 
 	}
 
 	#region Edit Settings
 	[MenuItem("Tools/BoneCracker Games/Realistic Car Controller/Edit RCC Settings", false, -100)]
 	public static void OpenRCCSettings(){
-		Selection.activeObject =RCC_Settings.Instance;
+		Selection.activeObject =RCC_SettingsData.InstanceR;
 	}
 	#endregion
 
 	#region Configure
 	[MenuItem("Tools/BoneCracker Games/Realistic Car Controller/Configure Demo Vehicles", false, -65)]
 	public static void OpenDemoVehiclesSettings(){
-		Selection.activeObject = RCC_DemoVehicles.Instance;
+		Selection.activeObject = RCC_DemoVehiclesData.InstanceR;
 	}
 
 	#if BCG_PHOTON && PHOTON_UNITY_NETWORKING
@@ -46,7 +46,7 @@ public class RCC_EditorWindows : Editor {
 
 	[MenuItem("Tools/BoneCracker Games/Realistic Car Controller/Configure Ground Materials", false, -65)]
 	public static void OpenGroundMaterialsSettings(){
-		Selection.activeObject =RCC_GroundMaterials.Instance;
+		Selection.activeObject =RCC_GroundMaterialsData.InstanceR;
 	}
 
 	[MenuItem("Tools/BoneCracker Games/Realistic Car Controller/Configure Changable Wheels", false, -65)]
@@ -56,7 +56,7 @@ public class RCC_EditorWindows : Editor {
 
 	[MenuItem("Tools/BoneCracker Games/Realistic Car Controller/Configure Recorded Clips", false, -65)]
 	public static void OpenRecordSettings(){
-		Selection.activeObject = RCC_Records.Instance;
+		Selection.activeObject = RCC_RecordsData.InstanceR;
 	}
 	#endregion
 
@@ -64,15 +64,15 @@ public class RCC_EditorWindows : Editor {
 	[MenuItem("Tools/BoneCracker Games/Realistic Car Controller/Create/Cameras/Add RCC Camera To Scene", false, -50)]
 	public static void CreateRCCCamera(){
 
-		if (GameObject.FindObjectOfType<RCC_Camera> ()) {
+		if (GameObject.FindObjectOfType<RCC_CameraController> ()) {
 
 			EditorUtility.DisplayDialog ("Scene has RCC Camera already!", "Scene has RCC Camera already!", "Close");
-			Selection.activeGameObject = GameObject.FindObjectOfType<RCC_Camera>().gameObject;
+			Selection.activeGameObject = GameObject.FindObjectOfType<RCC_CameraController>().gameObject;
 
 		} else {
 
-			GameObject cam = Instantiate (RCC_Settings.Instance.RCCMainCamera.gameObject);
-			cam.name = RCC_Settings.Instance.RCCMainCamera.name;
+			GameObject cam = Instantiate (RCC_SettingsData.InstanceR.RCCMainCameraController.gameObject);
+			cam.name = RCC_SettingsData.InstanceR.RCCMainCameraController.name;
 			Selection.activeGameObject = cam.gameObject;
 
 		}
@@ -88,16 +88,16 @@ public class RCC_EditorWindows : Editor {
 
 		}else{
 
-			if(SelectedCar().gameObject.GetComponentInChildren<RCC_HoodCamera>()){
+			if(SelectedCar().gameObject.GetComponentInChildren<RCC_HoodCameraBehaviour>()){
 				
 				EditorUtility.DisplayDialog("Your Vehicle Has Hood Camera Already!", "Your vehicle has hood camera already!", "Close");
-				Selection.activeGameObject = SelectedCar ().gameObject.GetComponentInChildren<RCC_HoodCamera> ().gameObject;
+				Selection.activeGameObject = SelectedCar ().gameObject.GetComponentInChildren<RCC_HoodCameraBehaviour> ().gameObject;
 				return;
 
 			}
 
-			GameObject hoodCam = (GameObject)Instantiate(RCC_Settings.Instance.hoodCamera, SelectedCar().transform.position, SelectedCar().transform.rotation);
-			hoodCam.name = RCC_Settings.Instance.hoodCamera.name;
+			GameObject hoodCam = (GameObject)Instantiate(RCC_SettingsData.InstanceR.hoodCameraObject, SelectedCar().transform.position, SelectedCar().transform.rotation);
+			hoodCam.name = RCC_SettingsData.InstanceR.hoodCameraObject.name;
 			hoodCam.transform.SetParent(SelectedCar().transform, true);
 			hoodCam.GetComponent<ConfigurableJoint>().connectedBody = SelectedCar().gameObject.GetComponent<Rigidbody>();
 			RCC_LabelEditor.SetIcon(hoodCam, RCC_LabelEditor.LabelIcon.Purple);
@@ -126,15 +126,15 @@ public class RCC_EditorWindows : Editor {
 
 		}else{
 
-			if(SelectedCar().gameObject.GetComponentInChildren<RCC_WheelCamera>()){
+			if(SelectedCar().gameObject.GetComponentInChildren<RCC_WheelCameraController>()){
 				EditorUtility.DisplayDialog("Your Vehicle Has Wheel Camera Already!", "Your vehicle has wheel camera already!", "Close");
-				Selection.activeGameObject = SelectedCar ().gameObject.GetComponentInChildren<RCC_WheelCamera> ().gameObject;
+				Selection.activeGameObject = SelectedCar ().gameObject.GetComponentInChildren<RCC_WheelCameraController> ().gameObject;
 				return;
 			}
 
 			GameObject wheelCam = new GameObject("WheelCamera");
 			wheelCam.transform.SetParent(SelectedCar().transform, false);
-			wheelCam.AddComponent<RCC_WheelCamera>();
+			wheelCam.AddComponent<RCC_WheelCameraController>();
 			RCC_LabelEditor.SetIcon(wheelCam, RCC_LabelEditor.LabelIcon.Purple);
 			Selection.activeGameObject = wheelCam;
 
@@ -170,8 +170,8 @@ public class RCC_EditorWindows : Editor {
 				lightsMain = SelectedCar().transform.Find(SelectedCar().transform.name+"/Lights").gameObject;
 			}
 
-			GameObject headLight = GameObject.Instantiate (RCC_Settings.Instance.headLights, lightsMain.transform.position, lightsMain.transform.rotation) as GameObject;
-			headLight.name = RCC_Settings.Instance.headLights.name;
+			GameObject headLight = GameObject.Instantiate (RCC_SettingsData.InstanceR.headLightsObject, lightsMain.transform.position, lightsMain.transform.rotation) as GameObject;
+			headLight.name = RCC_SettingsData.InstanceR.headLightsObject.name;
 			headLight.transform.SetParent(lightsMain.transform);
 			headLight.transform.localRotation = Quaternion.identity;
 			headLight.transform.localPosition = new Vector3(0f, 0f, 2f);
@@ -214,8 +214,8 @@ public class RCC_EditorWindows : Editor {
 
 			}
 
-			GameObject brakeLight = GameObject.Instantiate (RCC_Settings.Instance.brakeLights, lightsMain.transform.position, lightsMain.transform.rotation) as GameObject;
-			brakeLight.name = RCC_Settings.Instance.brakeLights.name;
+			GameObject brakeLight = GameObject.Instantiate (RCC_SettingsData.InstanceR.brakeLightsObject, lightsMain.transform.position, lightsMain.transform.rotation) as GameObject;
+			brakeLight.name = RCC_SettingsData.InstanceR.brakeLightsObject.name;
 			brakeLight.transform.SetParent(lightsMain.transform);
 			brakeLight.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
 			brakeLight.transform.localPosition = new Vector3(0f, 0f, -2f);
@@ -258,8 +258,8 @@ public class RCC_EditorWindows : Editor {
 
 			}
 
-			GameObject reverseLight = GameObject.Instantiate (RCC_Settings.Instance.reverseLights, lightsMain.transform.position, lightsMain.transform.rotation) as GameObject;
-			reverseLight.name = RCC_Settings.Instance.reverseLights.name;
+			GameObject reverseLight = GameObject.Instantiate (RCC_SettingsData.InstanceR.reverseLightsObject, lightsMain.transform.position, lightsMain.transform.rotation) as GameObject;
+			reverseLight.name = RCC_SettingsData.InstanceR.reverseLightsObject.name;
 			reverseLight.transform.SetParent(lightsMain.transform);
 			reverseLight.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
 			reverseLight.transform.localPosition = new Vector3(0f, 0f, -2f);
@@ -302,9 +302,9 @@ public class RCC_EditorWindows : Editor {
 
 			}
 
-			GameObject indicatorLight = GameObject.Instantiate (RCC_Settings.Instance.indicatorLights, lightsMain.transform.position, lightsMain.transform.rotation) as GameObject;
+			GameObject indicatorLight = GameObject.Instantiate (RCC_SettingsData.InstanceR.indicatorLightsObject, lightsMain.transform.position, lightsMain.transform.rotation) as GameObject;
 			Vector3 relativePos = SelectedCar().transform.InverseTransformPoint (indicatorLight.transform.position);
-			indicatorLight.name = RCC_Settings.Instance.indicatorLights.name;
+			indicatorLight.name = RCC_SettingsData.InstanceR.indicatorLightsObject.name;
 			indicatorLight.transform.SetParent(lightsMain.transform);
 
 			if (relativePos.z > 0f)
@@ -342,8 +342,8 @@ public class RCC_EditorWindows : Editor {
 
 		} else {
 
-			GameObject canvas = Instantiate (RCC_Settings.Instance.RCCCanvas);
-			canvas.name = RCC_Settings.Instance.RCCCanvas.name;
+			GameObject canvas = Instantiate (RCC_SettingsData.InstanceR.RCCCanvasObject);
+			canvas.name = RCC_SettingsData.InstanceR.RCCCanvasObject.name;
 			Selection.activeGameObject = canvas;
 
 		}
@@ -370,8 +370,8 @@ public class RCC_EditorWindows : Editor {
 				exhaustsMain = SelectedCar().transform.Find(SelectedCar().transform.name+"/Exhausts").gameObject;
 			}
 
-			GameObject exhaust = (GameObject)Instantiate(RCC_Settings.Instance.exhaustGas, SelectedCar().transform.position, SelectedCar().transform.rotation * Quaternion.Euler(0f, 180f, 0f));
-			exhaust.name = RCC_Settings.Instance.exhaustGas.name;
+			GameObject exhaust = (GameObject)Instantiate(RCC_SettingsData.InstanceR.exhaustGasObject, SelectedCar().transform.position, SelectedCar().transform.rotation * Quaternion.Euler(0f, 180f, 0f));
+			exhaust.name = RCC_SettingsData.InstanceR.exhaustGasObject.name;
 			exhaust.transform.SetParent(exhaustsMain.transform);
 			exhaust.transform.localPosition = new Vector3(1f, 0f, -2f);
 			RCC_LabelEditor.SetIcon(exhaust, RCC_LabelEditor.Icon.DiamondGray);
@@ -430,10 +430,10 @@ public class RCC_EditorWindows : Editor {
 	#region Static Methods
 	public static void CreateMirrors (GameObject vehicle) {
 
-		if(!vehicle.transform.GetComponentInChildren<RCC_Mirror>()){
+		if(!vehicle.transform.GetComponentInChildren<RCC_MirrorController>()){
 
-			GameObject mirrors = (GameObject)Instantiate(RCC_Settings.Instance.mirrors, vehicle.transform.position, vehicle.transform.rotation);
-			mirrors.transform.SetParent(vehicle.GetComponent<RCC_CarControllerV3>().transform, true);
+			GameObject mirrors = (GameObject)Instantiate(RCC_SettingsData.InstanceR.mirrorsObject, vehicle.transform.position, vehicle.transform.rotation);
+			mirrors.transform.SetParent(vehicle.GetComponent<RCC_CarMainControllerV3>().transform, true);
 			mirrors.name = "Mirrors";
 			RCC_LabelEditor.SetIcon(mirrors.transform.GetChild(0).gameObject, RCC_LabelEditor.Icon.DiamondRed);
 			RCC_LabelEditor.SetIcon(mirrors.transform.GetChild(1).gameObject, RCC_LabelEditor.Icon.DiamondBlue);
