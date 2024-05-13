@@ -45,7 +45,7 @@ public class GN_LevelSelection : MonoBehaviour
 		LevelsInit ();
         if (!SaveData.Instance.UnlockLevels)
         {
-            UnlockPopUpPanel.SetActive(true);
+            //UnlockPopUpPanel.SetActive(true);
         }
        
     }

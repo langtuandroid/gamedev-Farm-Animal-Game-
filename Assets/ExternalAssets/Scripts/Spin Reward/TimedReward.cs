@@ -109,7 +109,7 @@ public class TimedReward : MonoBehaviour
     {
         SpinButton.gameObject.SetActive(true);
         timer.text = "Free Spin";
-        timer.transform.DOScale(1.2f, 0.25f).SetLoops(10000, LoopType.Yoyo);
+        //timer.transform.DOScale(1.2f, 0.25f).SetLoops(10000, LoopType.Yoyo);
         SpinButton.onClick.RemoveAllListeners();
         SpinButton.onClick.AddListener(() => { StartCoroutine(DoClaim()); });
     }

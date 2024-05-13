@@ -204,8 +204,8 @@ public class GN_GameController : MonoBehaviour {
 		//SpawnItems
 		if (Levels [currentLevel - 1].playerCar.Length > 0)
 		{
-//			Levels[currentLevel - 1].playerCar[0].Item = Instantiate(playableCars[GameManager.Instance.CurrentPlayer], Levels [currentLevel - 1].playerCar [0].SpawnPoint.position, Levels [currentLevel - 1].playerCar [0].SpawnPoint.rotation); 
-			Levels[currentLevel - 1].playerCar[0].Item = playableCars[GameManager.Instance.CurrentPlayer];
+			Levels[currentLevel - 1].playerCar[0].Item = Instantiate(playableCars[GameManager.Instance.CurrentPlayer], Levels [currentLevel - 1].playerCar [0].SpawnPoint.position, Levels [currentLevel - 1].playerCar [0].SpawnPoint.rotation); 
+			//Levels[currentLevel - 1].playerCar[0].Item = playableCars[GameManager.Instance.CurrentPlayer];
 			Levels[currentLevel - 1].playerCar[0].Item.SetActive(true);
 			Levels[currentLevel - 1].playerCar[0].Item.transform.position = Levels [currentLevel - 1].playerCar [0].SpawnPoint.position;
 			Levels[currentLevel - 1].playerCar[0].Item.transform.rotation = Levels [currentLevel - 1].playerCar [0].SpawnPoint.rotation;

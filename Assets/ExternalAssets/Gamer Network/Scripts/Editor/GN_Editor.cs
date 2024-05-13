@@ -33,12 +33,12 @@ public class GN_Editor {
 		guiMessageStyle1.normal.textColor = Color.grey;
 		guiMessageStyle1.alignment = TextAnchor.MiddleCenter;
 
-		EditorGUILayout.Space ();
+		/*EditorGUILayout.Space ();
 		EditorGUILayout.BeginVertical ("box");
 		GUILayout.Box (Logo, guiTitleStyle);
 		EditorGUILayout.LabelField ("Gamer Network Framework v" + version, guiMessageStyle);
 		EditorGUILayout.LabelField ("Component : " + module, guiMessageStyle1);
 		EditorGUILayout.EndHorizontal ();
-		EditorGUILayout.Space ();
+		EditorGUILayout.Space ();*/
 	}
 }

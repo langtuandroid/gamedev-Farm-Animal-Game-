@@ -34,7 +34,7 @@ public class GN_MainMenu : MonoBehaviour {
 		InitializeUI ();
         if (!SaveData.Instance.UnlockEverything)
         {
-            UnlockPopUpPanel.SetActive(true);
+            //UnlockPopUpPanel.SetActive(true);
         }
     }
 

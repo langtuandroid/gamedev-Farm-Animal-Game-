@@ -75,7 +75,7 @@ public class GN_PlayerSelection : MonoBehaviour {
 		GetPlayerInfo ();
         if (!SaveData.Instance.UnlockCars)
         {
-            UnlockPopUpPanel.SetActive(true);
+            //UnlockPopUpPanel.SetActive(true);
         }
    }
 
